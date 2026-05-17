@@ -1,0 +1,1071 @@
+{
+  "info": {
+    "_postman_id": "4c6c1853-1d4f-4b60-82f0-0624549c170f",
+    "name": "WebLearn with Hackathon",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "53132482",
+    "_collection_link": "https://go.postman.co/collection/53132482-4c6c1853-1d4f-4b60-82f0-0624549c170f?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "AUTH",
+      "item": [
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"name\": \"Adnan\",\r\n  \"email\": \"adnan@test.com\",\r\n  \"password\": \"123456\",\r\n  \"role\": \"user\"\r\n}\r\n//Or As Organizer\r\n{\r\n  \"name\": \"Adnan\",\r\n  \"email\": \"adnan@test.com\",\r\n  \"password\": \"123456\",\r\n  \"role\": \"user\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/auth/register",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "api",
+                "auth",
+                "register"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiaWF0IjoxNzc4ODI1OTk5LCJleHAiOjE3Nzk0MzA3OTl9.pS7t76k5ULTuVD50VxpPTs4Ae9Fb6iHhS4APnpV_c8Q",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNzc4ODI2NTUzLCJleHAiOjE3Nzk0MzEzNTN9.H0jXqi_b9Nq__vwOxukaJxViEdEVRaF2jZlXnh2Qvhk",
+                "type": "text",
+                "disabled": true
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"email\": \"adnan@test.com\",\r\n  \"password\": \"123456\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/auth/login",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "COURSES",
+      "item": [
+        {
+          "name": "getAllCourses",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiaWF0IjoxNzc4ODI1OTk5LCJleHAiOjE3Nzk0MzA3OTl9.pS7t76k5ULTuVD50VxpPTs4Ae9Fb6iHhS4APnpV_c8Q",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNzc4ODI2NTUzLCJleHAiOjE3Nzk0MzEzNTN9.H0jXqi_b9Nq__vwOxukaJxViEdEVRaF2jZlXnh2Qvhk",
+                "type": "text",
+                "disabled": true
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"title\": \"Web Global Hackathon 2 \",\r\n  \"description\": \"Build Web tools 2\" ,\r\n  \"banner\": \"banner.jpg\",\r\n  \"registration_link\": \"https://devpost.com\",\r\n  \"start_date\": \"2026-06-01 10:00:00\",\r\n  \"end_date\": \"2026-06-05 18:00:00\"\r\n}"
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/courses",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "api",
+                "courses"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "getCourseById",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiaWF0IjoxNzc4ODI1OTk5LCJleHAiOjE3Nzk0MzA3OTl9.pS7t76k5ULTuVD50VxpPTs4Ae9Fb6iHhS4APnpV_c8Q",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNzc4ODI2NTUzLCJleHAiOjE3Nzk0MzEzNTN9.H0jXqi_b9Nq__vwOxukaJxViEdEVRaF2jZlXnh2Qvhk",
+                "type": "text",
+                "disabled": true
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"title\": \"Web Global Hackathon 2 \",\r\n  \"description\": \"Build Web tools 2\" ,\r\n  \"banner\": \"banner.jpg\",\r\n  \"registration_link\": \"https://devpost.com\",\r\n  \"start_date\": \"2026-06-01 10:00:00\",\r\n  \"end_date\": \"2026-06-05 18:00:00\"\r\n}"
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/courses/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "api",
+                "courses",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "createCourseAsAdmin",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiaWF0IjoxNzc4ODI1OTk5LCJleHAiOjE3Nzk0MzA3OTl9.pS7t76k5ULTuVD50VxpPTs4Ae9Fb6iHhS4APnpV_c8Q",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNzc4ODI2NTUzLCJleHAiOjE3Nzk0MzEzNTN9.H0jXqi_b9Nq__vwOxukaJxViEdEVRaF2jZlXnh2Qvhk",
+                "type": "text",
+                "disabled": true
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"title\": \"Web Dev Fundamentals\",\r\n  \"description\": \"Learn HTML CSS JS\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/courses",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "api",
+                "courses"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "ARTICLES",
+      "item": [
+        {
+          "name": "createArticlesAsAdmin",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiaWF0IjoxNzc4ODI1OTk5LCJleHAiOjE3Nzk0MzA3OTl9.pS7t76k5ULTuVD50VxpPTs4Ae9Fb6iHhS4APnpV_c8Q",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNzc4ODI2NTUzLCJleHAiOjE3Nzk0MzEzNTN9.H0jXqi_b9Nq__vwOxukaJxViEdEVRaF2jZlXnh2Qvhk",
+                "type": "text",
+                "disabled": true
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"title\": \"Intro to HTML\",\r\n  \"content\": \"<h1>Hello</h1>\",\r\n  \"courseId\": 1,\r\n  \"order\": 1\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/articles",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "api",
+                "articles"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "getArticlesByCourse",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiaWF0IjoxNzc4ODI1OTk5LCJleHAiOjE3Nzk0MzA3OTl9.pS7t76k5ULTuVD50VxpPTs4Ae9Fb6iHhS4APnpV_c8Q",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNzc4ODI2NTUzLCJleHAiOjE3Nzk0MzEzNTN9.H0jXqi_b9Nq__vwOxukaJxViEdEVRaF2jZlXnh2Qvhk",
+                "type": "text",
+                "disabled": true
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"title\": \"Web Global Hackathon 2 \",\r\n  \"description\": \"Build Web tools 2\" ,\r\n  \"banner\": \"banner.jpg\",\r\n  \"registration_link\": \"https://devpost.com\",\r\n  \"start_date\": \"2026-06-01 10:00:00\",\r\n  \"end_date\": \"2026-06-05 18:00:00\"\r\n}"
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/articles/course/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "api",
+                "articles",
+                "course",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "getOneArticleById",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiaWF0IjoxNzc4ODI1OTk5LCJleHAiOjE3Nzk0MzA3OTl9.pS7t76k5ULTuVD50VxpPTs4Ae9Fb6iHhS4APnpV_c8Q",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNzc4ODI2NTUzLCJleHAiOjE3Nzk0MzEzNTN9.H0jXqi_b9Nq__vwOxukaJxViEdEVRaF2jZlXnh2Qvhk",
+                "type": "text",
+                "disabled": true
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"title\": \"Web Global Hackathon 2 \",\r\n  \"description\": \"Build Web tools 2\" ,\r\n  \"banner\": \"banner.jpg\",\r\n  \"registration_link\": \"https://devpost.com\",\r\n  \"start_date\": \"2026-06-01 10:00:00\",\r\n  \"end_date\": \"2026-06-05 18:00:00\"\r\n}"
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/articles/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "api",
+                "articles",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "PROGRESS",
+      "item": [
+        {
+          "name": "markAsComplete",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"articleId\": {{articleId}}\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/progress/complete",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "api",
+                "progress",
+                "complete"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "getProgress",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiaWF0IjoxNzc4ODI1OTk5LCJleHAiOjE3Nzk0MzA3OTl9.pS7t76k5ULTuVD50VxpPTs4Ae9Fb6iHhS4APnpV_c8Q",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNzc4ODI2NTUzLCJleHAiOjE3Nzk0MzEzNTN9.H0jXqi_b9Nq__vwOxukaJxViEdEVRaF2jZlXnh2Qvhk",
+                "type": "text",
+                "disabled": true
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"title\": \"Web Global Hackathon 2 \",\r\n  \"description\": \"Build Web tools 2\" ,\r\n  \"banner\": \"banner.jpg\",\r\n  \"registration_link\": \"https://devpost.com\",\r\n  \"start_date\": \"2026-06-01 10:00:00\",\r\n  \"end_date\": \"2026-06-05 18:00:00\"\r\n}"
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/progress/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "api",
+                "progress",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "CHEATSHEETS",
+      "item": [
+        {
+          "name": "createCheatsheetAsAdmin",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiaWF0IjoxNzc4ODI1OTk5LCJleHAiOjE3Nzk0MzA3OTl9.pS7t76k5ULTuVD50VxpPTs4Ae9Fb6iHhS4APnpV_c8Q",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNzc4ODI2NTUzLCJleHAiOjE3Nzk0MzEzNTN9.H0jXqi_b9Nq__vwOxukaJxViEdEVRaF2jZlXnh2Qvhk",
+                "type": "text",
+                "disabled": true
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"title\": \"HTML Cheatsheet\",\r\n  \"slug\": \"html-cheatsheet\",\r\n  \"category\": \"HTML\",\r\n  \"content\": \"<h1>HTML Basics</h1>\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/cheatsheets",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "api",
+                "cheatsheets"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "getAllCheatsheets",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiaWF0IjoxNzc4ODI1OTk5LCJleHAiOjE3Nzk0MzA3OTl9.pS7t76k5ULTuVD50VxpPTs4Ae9Fb6iHhS4APnpV_c8Q",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNzc4ODI2NTUzLCJleHAiOjE3Nzk0MzEzNTN9.H0jXqi_b9Nq__vwOxukaJxViEdEVRaF2jZlXnh2Qvhk",
+                "type": "text",
+                "disabled": true
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"title\": \"Web Global Hackathon 2 \",\r\n  \"description\": \"Build Web tools 2\" ,\r\n  \"banner\": \"banner.jpg\",\r\n  \"registration_link\": \"https://devpost.com\",\r\n  \"start_date\": \"2026-06-01 10:00:00\",\r\n  \"end_date\": \"2026-06-05 18:00:00\"\r\n}"
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/cheatsheets",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "api",
+                "cheatsheets"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "getCheatsheetBySlug",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiaWF0IjoxNzc4ODI1OTk5LCJleHAiOjE3Nzk0MzA3OTl9.pS7t76k5ULTuVD50VxpPTs4Ae9Fb6iHhS4APnpV_c8Q",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNzc4ODI2NTUzLCJleHAiOjE3Nzk0MzEzNTN9.H0jXqi_b9Nq__vwOxukaJxViEdEVRaF2jZlXnh2Qvhk",
+                "type": "text",
+                "disabled": true
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"title\": \"Web Global Hackathon 2 \",\r\n  \"description\": \"Build Web tools 2\" ,\r\n  \"banner\": \"banner.jpg\",\r\n  \"registration_link\": \"https://devpost.com\",\r\n  \"start_date\": \"2026-06-01 10:00:00\",\r\n  \"end_date\": \"2026-06-05 18:00:00\"\r\n}"
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/cheatsheets/html-cheatsheet",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "api",
+                "cheatsheets",
+                "html-cheatsheet"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "New Folder",
+      "item": []
+    },
+    {
+      "name": "HACKATHONS",
+      "item": [
+        {
+          "name": "getAllHackatons",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiaWF0IjoxNzc4ODI1OTk5LCJleHAiOjE3Nzk0MzA3OTl9.pS7t76k5ULTuVD50VxpPTs4Ae9Fb6iHhS4APnpV_c8Q",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNzc4ODI2NTUzLCJleHAiOjE3Nzk0MzEzNTN9.H0jXqi_b9Nq__vwOxukaJxViEdEVRaF2jZlXnh2Qvhk",
+                "type": "text",
+                "disabled": true
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"title\": \"Web Global Hackathon 2 \",\r\n  \"description\": \"Build Web tools 2\" ,\r\n  \"banner\": \"banner.jpg\",\r\n  \"registration_link\": \"https://devpost.com\",\r\n  \"start_date\": \"2026-06-01 10:00:00\",\r\n  \"end_date\": \"2026-06-05 18:00:00\"\r\n}"
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/hackathons",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "api",
+                "hackathons"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "getHackatonsBySearch",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiaWF0IjoxNzc4ODI1OTk5LCJleHAiOjE3Nzk0MzA3OTl9.pS7t76k5ULTuVD50VxpPTs4Ae9Fb6iHhS4APnpV_c8Q",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNzc4ODI2NTUzLCJleHAiOjE3Nzk0MzEzNTN9.H0jXqi_b9Nq__vwOxukaJxViEdEVRaF2jZlXnh2Qvhk",
+                "type": "text",
+                "disabled": true
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"title\": \"Web Global Hackathon 2 \",\r\n  \"description\": \"Build Web tools 2\" ,\r\n  \"banner\": \"banner.jpg\",\r\n  \"registration_link\": \"https://devpost.com\",\r\n  \"start_date\": \"2026-06-01 10:00:00\",\r\n  \"end_date\": \"2026-06-05 18:00:00\"\r\n}"
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/hackathons?search=AI",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "api",
+                "hackathons"
+              ],
+              "query": [
+                {
+                  "key": "search",
+                  "value": "AI"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "getHackatonsByStatus",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiaWF0IjoxNzc4ODI1OTk5LCJleHAiOjE3Nzk0MzA3OTl9.pS7t76k5ULTuVD50VxpPTs4Ae9Fb6iHhS4APnpV_c8Q",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNzc4ODI2NTUzLCJleHAiOjE3Nzk0MzEzNTN9.H0jXqi_b9Nq__vwOxukaJxViEdEVRaF2jZlXnh2Qvhk",
+                "type": "text",
+                "disabled": true
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"title\": \"Web Global Hackathon 2 \",\r\n  \"description\": \"Build Web tools 2\" ,\r\n  \"banner\": \"banner.jpg\",\r\n  \"registration_link\": \"https://devpost.com\",\r\n  \"start_date\": \"2026-06-01 10:00:00\",\r\n  \"end_date\": \"2026-06-05 18:00:00\"\r\n}"
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/hackathons?status=active",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "api",
+                "hackathons"
+              ],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "active"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "getHackathonsBySearch&Status",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiaWF0IjoxNzc4ODI1OTk5LCJleHAiOjE3Nzk0MzA3OTl9.pS7t76k5ULTuVD50VxpPTs4Ae9Fb6iHhS4APnpV_c8Q",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNzc4ODI2NTUzLCJleHAiOjE3Nzk0MzEzNTN9.H0jXqi_b9Nq__vwOxukaJxViEdEVRaF2jZlXnh2Qvhk",
+                "type": "text",
+                "disabled": true
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"title\": \"Web Global Hackathon 2 \",\r\n  \"description\": \"Build Web tools 2\" ,\r\n  \"banner\": \"banner.jpg\",\r\n  \"registration_link\": \"https://devpost.com\",\r\n  \"start_date\": \"2026-06-01 10:00:00\",\r\n  \"end_date\": \"2026-06-05 18:00:00\"\r\n}"
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/hackathons?search=AI&status=active",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "api",
+                "hackathons"
+              ],
+              "query": [
+                {
+                  "key": "search",
+                  "value": "AI"
+                },
+                {
+                  "key": "status",
+                  "value": "active"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "createHackathon",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiaWF0IjoxNzc4ODI1OTk5LCJleHAiOjE3Nzk0MzA3OTl9.pS7t76k5ULTuVD50VxpPTs4Ae9Fb6iHhS4APnpV_c8Q",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNzc4ODI2NTUzLCJleHAiOjE3Nzk0MzEzNTN9.H0jXqi_b9Nq__vwOxukaJxViEdEVRaF2jZlXnh2Qvhk",
+                "type": "text",
+                "disabled": true
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"title\": \"AI Hackathon\",\r\n  \"description\": \"Build AI tools\",\r\n  \"banner\": \"banner.jpg\",\r\n  \"registration_link\": \"https://devpost.com\",\r\n  \"start_date\": \"2026-06-01 10:00:00\",\r\n  \"end_date\": \"2026-06-05 18:00:00\"\r\n}\r\n//Organizer or Admin Token required",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/hackathons",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "api",
+                "hackathons"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "updateHackathon",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiaWF0IjoxNzc4ODI1OTk5LCJleHAiOjE3Nzk0MzA3OTl9.pS7t76k5ULTuVD50VxpPTs4Ae9Fb6iHhS4APnpV_c8Q",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNzc4ODI2NTUzLCJleHAiOjE3Nzk0MzEzNTN9.H0jXqi_b9Nq__vwOxukaJxViEdEVRaF2jZlXnh2Qvhk",
+                "type": "text",
+                "disabled": true
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"title\": \"Web Global Hackathon 2 \",\r\n  \"description\": \"Build Web tools 2\" ,\r\n  \"banner\": \"banner.jpg\",\r\n  \"registration_link\": \"https://devpost.com\",\r\n  \"start_date\": \"2026-06-01 10:00:00\",\r\n  \"end_date\": \"2026-06-05 18:00:00\"\r\n}"
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/hackathons/7",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "api",
+                "hackathons",
+                "7"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "deleteHackathon",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiaWF0IjoxNzc4ODI1OTk5LCJleHAiOjE3Nzk0MzA3OTl9.pS7t76k5ULTuVD50VxpPTs4Ae9Fb6iHhS4APnpV_c8Q",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNzc4ODI2NTUzLCJleHAiOjE3Nzk0MzEzNTN9.H0jXqi_b9Nq__vwOxukaJxViEdEVRaF2jZlXnh2Qvhk",
+                "type": "text",
+                "disabled": true
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"title\": \"Web Global Hackathon 2 \",\r\n  \"description\": \"Build Web tools 2\" ,\r\n  \"banner\": \"banner.jpg\",\r\n  \"registration_link\": \"https://devpost.com\",\r\n  \"start_date\": \"2026-06-01 10:00:00\",\r\n  \"end_date\": \"2026-06-05 18:00:00\"\r\n}"
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/hackathons/7",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "api",
+                "hackathons",
+                "7"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "BOOKMARKS",
+      "item": [
+        {
+          "name": "addBookmark",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiaWF0IjoxNzc4ODI1OTk5LCJleHAiOjE3Nzk0MzA3OTl9.pS7t76k5ULTuVD50VxpPTs4Ae9Fb6iHhS4APnpV_c8Q",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNzc4ODI2NTUzLCJleHAiOjE3Nzk0MzEzNTN9.H0jXqi_b9Nq__vwOxukaJxViEdEVRaF2jZlXnh2Qvhk",
+                "type": "text",
+                "disabled": true
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"title\": \"Web Global Hackathon 2 \",\r\n  \"description\": \"Build Web tools 2\" ,\r\n  \"banner\": \"banner.jpg\",\r\n  \"registration_link\": \"https://devpost.com\",\r\n  \"start_date\": \"2026-06-01 10:00:00\",\r\n  \"end_date\": \"2026-06-05 18:00:00\"\r\n}"
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/hackathons/7/bookmark",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "api",
+                "hackathons",
+                "7",
+                "bookmark"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "getMyBookmark",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiaWF0IjoxNzc4ODI1OTk5LCJleHAiOjE3Nzk0MzA3OTl9.pS7t76k5ULTuVD50VxpPTs4Ae9Fb6iHhS4APnpV_c8Q",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNzc4ODI2NTUzLCJleHAiOjE3Nzk0MzEzNTN9.H0jXqi_b9Nq__vwOxukaJxViEdEVRaF2jZlXnh2Qvhk",
+                "type": "text",
+                "disabled": true
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"title\": \"Web Global Hackathon 2 \",\r\n  \"description\": \"Build Web tools 2\" ,\r\n  \"banner\": \"banner.jpg\",\r\n  \"registration_link\": \"https://devpost.com\",\r\n  \"start_date\": \"2026-06-01 10:00:00\",\r\n  \"end_date\": \"2026-06-05 18:00:00\"\r\n}"
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/hackathons/bookmarks/me",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "api",
+                "hackathons",
+                "bookmarks",
+                "me"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "ADMIN",
+      "item": [
+        {
+          "name": "getPendingRequests",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiaWF0IjoxNzc4ODI1OTk5LCJleHAiOjE3Nzk0MzA3OTl9.pS7t76k5ULTuVD50VxpPTs4Ae9Fb6iHhS4APnpV_c8Q",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNzc4ODI2NTUzLCJleHAiOjE3Nzk0MzEzNTN9.H0jXqi_b9Nq__vwOxukaJxViEdEVRaF2jZlXnh2Qvhk",
+                "type": "text",
+                "disabled": true
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"title\": \"Web Global Hackathon 2 \",\r\n  \"description\": \"Build Web tools 2\" ,\r\n  \"banner\": \"banner.jpg\",\r\n  \"registration_link\": \"https://devpost.com\",\r\n  \"start_date\": \"2026-06-01 10:00:00\",\r\n  \"end_date\": \"2026-06-05 18:00:00\"\r\n}"
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/admin/organizers/pending",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "api",
+                "admin",
+                "organizers",
+                "pending"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "ApproveRequest",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiaWF0IjoxNzc4ODI1OTk5LCJleHAiOjE3Nzk0MzA3OTl9.pS7t76k5ULTuVD50VxpPTs4Ae9Fb6iHhS4APnpV_c8Q",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNzc4ODI2NTUzLCJleHAiOjE3Nzk0MzEzNTN9.H0jXqi_b9Nq__vwOxukaJxViEdEVRaF2jZlXnh2Qvhk",
+                "type": "text",
+                "disabled": true
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"title\": \"Web Global Hackathon 2 \",\r\n  \"description\": \"Build Web tools 2\" ,\r\n  \"banner\": \"banner.jpg\",\r\n  \"registration_link\": \"https://devpost.com\",\r\n  \"start_date\": \"2026-06-01 10:00:00\",\r\n  \"end_date\": \"2026-06-05 18:00:00\"\r\n}"
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/admin/organizers/:userId/approve",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "api",
+                "admin",
+                "organizers",
+                ":userId",
+                "approve"
+              ],
+              "variable": [
+                {
+                  "key": "userId",
+                  "value": ""
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "RejectRequest",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiaWF0IjoxNzc4ODI1OTk5LCJleHAiOjE3Nzk0MzA3OTl9.pS7t76k5ULTuVD50VxpPTs4Ae9Fb6iHhS4APnpV_c8Q",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNzc4ODI2NTUzLCJleHAiOjE3Nzk0MzEzNTN9.H0jXqi_b9Nq__vwOxukaJxViEdEVRaF2jZlXnh2Qvhk",
+                "type": "text",
+                "disabled": true
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"title\": \"Web Global Hackathon 2 \",\r\n  \"description\": \"Build Web tools 2\" ,\r\n  \"banner\": \"banner.jpg\",\r\n  \"registration_link\": \"https://devpost.com\",\r\n  \"start_date\": \"2026-06-01 10:00:00\",\r\n  \"end_date\": \"2026-06-05 18:00:00\"\r\n}"
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/admin/organizers/:userId/reject",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "5000",
+              "path": [
+                "api",
+                "admin",
+                "organizers",
+                ":userId",
+                "reject"
+              ],
+              "variable": [
+                {
+                  "key": "userId",
+                  "value": ""
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}
