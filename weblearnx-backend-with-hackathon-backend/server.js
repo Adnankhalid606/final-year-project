@@ -1,5 +1,7 @@
-import express from "express";
 import dotenv from "dotenv";
+dotenv.config(); // Must be first — loads env vars before any module reads process.env
+
+import express from "express";
 import cors from "cors";
 import db from "./config/db.js";
 
@@ -13,8 +15,6 @@ import adminRoutes from "./routes/adminRoutes.js";
 
 import { protect } from "./middleware/authMiddleware.js";
 
-dotenv.config();
-
 const app = express();
 
 /**
@@ -26,18 +26,15 @@ app.use(cors());
 
 /**
  * Route registration
- * Each route group maps a backend domain area to its controller and middleware pipeline.
+ * All route groups are registered together before the server starts listening.
  */
 app.use("/api/auth", authRoutes);
 app.use("/api/courses", courseRoutes);
 app.use("/api/articles", articleRoutes);
 app.use("/api/progress", progressRoutes);
 app.use("/api/cheatsheets", cheatsheetRoutes);
-
-/**
- * External hackathon discovery and management routes.
- */
 app.use("/api/hackathons", hackathonRoutes);
+app.use("/api/admin", adminRoutes);
 
 /**
  * Protected smoke-test route
@@ -51,22 +48,6 @@ app.get("/api/test", protect, (req, res) => {
 });
 
 /**
- * Startup database connectivity check
- * Verifies the MySQL pool can execute queries when the server boots.
- * Useful during local development and viva demonstrations of backend wiring.
- */
-const testDB = async () => {
-  try {
-    const [rows] = await db.execute("SELECT 1");
-    console.log("MySQL Connected âœ…");
-  } catch (err) {
-    console.error("DB Error âŒ", err);
-  }
-};
-
-testDB();
-
-/**
  * Public health route
  * Lightweight endpoint for confirming the API process is running.
  */
@@ -74,8 +55,20 @@ app.get("/", (req, res) => {
   res.send("API is running...");
 });
 
-// ADMIN ROUTES
-app.use("/api/admin", adminRoutes);
+/**
+ * Startup database connectivity check
+ * Verifies the MySQL pool can execute queries when the server boots.
+ */
+const testDB = async () => {
+  try {
+    await db.execute("SELECT 1");
+    console.log("MySQL Connected \u2705");
+  } catch (err) {
+    console.error("DB Error \u274C", err);
+  }
+};
+
+testDB();
 
 const PORT = process.env.PORT || 5000;
 

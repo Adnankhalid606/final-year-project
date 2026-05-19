@@ -1,6 +1,7 @@
 import express from "express";
 import {
   bookmarkHackathon,
+  removeBookmark,
   createHackathon,
   deleteHackathon,
   getHackathons,
@@ -18,29 +19,18 @@ const router = express.Router();
 
 /**
  * Hackathon route group
- * Combines public discovery endpoints with protected bookmark and organizer/admin management APIs.
- * Route-level middleware handles authentication and role checks before controller business logic runs.
+ * Static routes are declared before dynamic /:hackathonId routes to prevent
+ * Express from matching "bookmarks/me" as a hackathon ID.
  */
 
 /**
  * Public listing route
- * No authentication is required because hackathon discovery is available to all clients.
+ * No authentication required — hackathon discovery is open to all clients.
  */
 router.get("/", getHackathons);
 
 /**
- * Bookmark route
- * Restricted to authenticated users with the learner role.
- */
-router.post(
-  "/:hackathonId/bookmark",
-  protect,
-  authorizeRoles("user"),
-  bookmarkHackathon
-);
-
-/**
- * Bookmark listing route
+ * Bookmark listing route — MUST be before /:hackathonId routes
  * Returns saved hackathons for the currently authenticated learner only.
  */
 router.get("/bookmarks/me", protect, authorizeRoles("user"), getUserBookmarks);
@@ -59,9 +49,31 @@ router.post(
 );
 
 /**
+ * Bookmark route — dynamic, must come after static /bookmarks/me
+ * Restricted to authenticated users with the learner role.
+ */
+router.post(
+  "/:hackathonId/bookmark",
+  protect,
+  authorizeRoles("user"),
+  bookmarkHackathon
+);
+
+/**
+ * Remove bookmark route
+ * Allows users to delete a previously saved bookmark.
+ */
+router.delete(
+  "/:hackathonId/bookmark",
+  protect,
+  authorizeRoles("user"),
+  removeBookmark
+);
+
+/**
  * Update route
  * Only organizers and admins can attempt updates.
- * Final ownership checks are enforced inside the controller using database record ownership.
+ * Final ownership checks are enforced inside the controller.
  */
 router.put(
   "/:hackathonId",

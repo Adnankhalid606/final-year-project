@@ -3,21 +3,47 @@ import db from "../config/db.js";
 /**
  * Create Article API
  * Admin-only endpoint for adding learning articles under a specific course.
- * Stores `created_by` from the authenticated user for ownership and audit visibility.
+ * Validates that the target course exists before inserting.
  */
 export const createArticle = async (req, res) => {
-  const { title, content, courseId, order } = req.body;
+  try {
+    const { title, content, courseId, order } = req.body;
 
-  const [result] = await db.execute(
-    "INSERT INTO articles (title, content, course_id, `order`, created_by) VALUES (?, ?, ?, ?, ?)",
-    [title, content, courseId, order, req.user.id]
-  );
+    // Input validation
+    if (!title || !String(title).trim()) {
+      return res.status(400).json({ success: false, message: "Title is required" });
+    }
+    if (!content || !String(content).trim()) {
+      return res.status(400).json({ success: false, message: "Content is required" });
+    }
+    if (!courseId || isNaN(parseInt(courseId, 10))) {
+      return res.status(400).json({ success: false, message: "Valid courseId is required" });
+    }
 
-  res.json({
-    id: result.insertId,
-    title,
-    courseId,
-  });
+    // Verify the course exists and is not soft-deleted
+    const [course] = await db.execute(
+      "SELECT id FROM courses WHERE id = ? AND deleted_at IS NULL",
+      [courseId]
+    );
+    if (course.length === 0) {
+      return res.status(404).json({ success: false, message: "Course not found" });
+    }
+
+    const [result] = await db.execute(
+      "INSERT INTO articles (title, content, course_id, `order`, created_by) VALUES (?, ?, ?, ?, ?)",
+      [title.trim(), content.trim(), courseId, order ?? null, req.user.id]
+    );
+
+    return res.status(201).json({
+      success: true,
+      id: result.insertId,
+      title,
+      courseId,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ success: false, message: "Server Error" });
+  }
 };
 
 /**
@@ -26,12 +52,17 @@ export const createArticle = async (req, res) => {
  * Soft-deleted articles are excluded from the result set.
  */
 export const getArticlesByCourse = async (req, res) => {
-  const [rows] = await db.execute(
-    "SELECT * FROM articles WHERE course_id = ? AND deleted_at IS NULL ORDER BY `order` ASC",
-    [req.params.courseId]
-  );
+  try {
+    const [rows] = await db.execute(
+      "SELECT * FROM articles WHERE course_id = ? AND deleted_at IS NULL ORDER BY `order` ASC",
+      [req.params.courseId]
+    );
 
-  res.json(rows);
+    return res.json({ success: true, data: rows });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ success: false, message: "Server Error" });
+  }
 };
 
 /**
@@ -40,14 +71,19 @@ export const getArticlesByCourse = async (req, res) => {
  * Soft-deleted content is treated as unavailable and returns a not-found response.
  */
 export const getArticleById = async (req, res) => {
-  const [rows] = await db.execute(
-    "SELECT * FROM articles WHERE id = ? AND deleted_at IS NULL",
-    [req.params.id]
-  );
+  try {
+    const [rows] = await db.execute(
+      "SELECT * FROM articles WHERE id = ? AND deleted_at IS NULL",
+      [req.params.id]
+    );
 
-  if (rows.length === 0) {
-    return res.status(404).json({ message: "Article not found" });
+    if (rows.length === 0) {
+      return res.status(404).json({ success: false, message: "Article not found" });
+    }
+
+    return res.json({ success: true, data: rows[0] });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ success: false, message: "Server Error" });
   }
-
-  res.json(rows[0]);
 };

@@ -182,7 +182,8 @@ CREATE TABLE `users` (
   `name` varchar(100) DEFAULT NULL,
   `email` varchar(100) DEFAULT NULL,
   `password` varchar(255) DEFAULT NULL,
-  `role` enum('user','admin') DEFAULT 'user',
+  `role` enum('user','organizer','admin') DEFAULT 'user',
+  `account_status` enum('pending','approved','rejected') DEFAULT 'approved',
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `deleted_at` timestamp NULL DEFAULT NULL
@@ -192,9 +193,9 @@ CREATE TABLE `users` (
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`id`, `name`, `email`, `password`, `role`, `created_at`, `updated_at`, `deleted_at`) VALUES
-(1, 'Zain', 'zain@test.com', '$2b$10$vVfntePQVhpZrnvPT.PzXev1Wisy9FWHAhr6GpN6evd7ZIWm432pi', 'user', '2026-05-05 13:11:26', '2026-05-05 13:11:26', NULL),
-(2, 'Adnan', 'adnan@test.com', '$2b$10$ePAoL4ETxdXZwN6TXJVx/OIvBNMGgWphJX31OZyt7zB.N44vUdCPi', 'admin', '2026-05-05 13:12:00', '2026-05-05 13:26:20', NULL);
+INSERT INTO `users` (`id`, `name`, `email`, `password`, `role`, `account_status`, `created_at`, `updated_at`, `deleted_at`) VALUES
+(1, 'Zain', 'zain@test.com', '$2b$10$vVfntePQVhpZrnvPT.PzXev1Wisy9FWHAhr6GpN6evd7ZIWm432pi', 'user', 'approved', '2026-05-05 13:11:26', '2026-05-05 13:11:26', NULL),
+(2, 'Adnan', 'adnan@test.com', '$2b$10$ePAoL4ETxdXZwN6TXJVx/OIvBNMGgWphJX31OZyt7zB.N44vUdCPi', 'admin', 'approved', '2026-05-05 13:12:00', '2026-05-05 13:26:20', NULL);
 
 --
 -- Indexes for dumped tables

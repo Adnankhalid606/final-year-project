@@ -177,6 +177,12 @@ export const updateHackathon = async (req, res) => {
       return sendError(res, 403, "You can only edit your own hackathons");
     }
 
+    // Validate status value if provided
+    const allowedStatuses = ["upcoming", "active", "completed"];
+    if (status !== undefined && !allowedStatuses.includes(status)) {
+      return sendError(res, 400, "Status must be one of: upcoming, active, completed");
+    }
+
     await db.query(
       `UPDATE hackathons
        SET
@@ -233,6 +239,35 @@ export const deleteHackathon = async (req, res) => {
     );
 
     return sendSuccess(res, 200, "Hackathon deleted successfully");
+  } catch (error) {
+    return sendServerError(res, error);
+  }
+};
+
+/**
+ * Remove Bookmark API
+ * Allows authenticated learners to remove a previously saved hackathon bookmark.
+ */
+export const removeBookmark = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { hackathonId } = req.params;
+
+    const [existingBookmark] = await db.query(
+      `SELECT id FROM bookmarks WHERE user_id = ? AND hackathon_id = ?`,
+      [userId, hackathonId]
+    );
+
+    if (existingBookmark.length === 0) {
+      return sendError(res, 404, "Bookmark not found");
+    }
+
+    await db.query(
+      `DELETE FROM bookmarks WHERE user_id = ? AND hackathon_id = ?`,
+      [userId, hackathonId]
+    );
+
+    return sendSuccess(res, 200, "Bookmark removed successfully");
   } catch (error) {
     return sendServerError(res, error);
   }
@@ -299,13 +334,7 @@ export const getUserBookmarks = async (req, res) => {
       [userId]
     );
 
-    return sendSuccess(
-      res,
-      200,
-      "Bookmarks fetched successfully",
-      bookmarks,
-      { bookmarks }
-    );
+    return sendSuccess(res, 200, "Bookmarks fetched successfully", bookmarks);
   } catch (error) {
     return sendServerError(res, error);
   }

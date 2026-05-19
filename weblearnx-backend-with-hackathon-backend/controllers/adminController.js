@@ -1,12 +1,20 @@
 import db from "../config/db.js";
 
 /**
+ * Shared server error handler for admin controllers.
+ * Centralizes logging and hides internal details from API consumers.
+ */
+const sendServerError = (res, error) => {
+  console.error(error);
+  return res.status(500).json({ success: false, message: "Server Error" });
+};
+
+/**
  * Get all pending organizer requests
- * Admin can review organizer applications
+ * Admin can review organizer applications before granting access.
  */
 export const getPendingOrganizers = async (req, res) => {
   try {
-
     const [organizers] = await db.query(`
       SELECT
         id,
@@ -22,33 +30,26 @@ export const getPendingOrganizers = async (req, res) => {
       ORDER BY created_at DESC
     `);
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       message: "Pending organizers fetched successfully",
       data: organizers,
     });
-
   } catch (error) {
-    console.error(error);
-
-    res.status(500).json({
-      success: false,
-      message: "Server Error",
-    });
+    return sendServerError(res, error);
   }
 };
 
 /**
  * Approve organizer request
- * Changes organizer account status from pending to approved
+ * Changes organizer account_status from pending to approved.
  */
 export const approveOrganizer = async (req, res) => {
   try {
-
     const { userId } = req.params;
 
     const [users] = await db.query(
-      `SELECT * FROM users
+      `SELECT id FROM users
        WHERE id = ?
        AND role = 'organizer'
        AND deleted_at IS NULL`,
@@ -56,45 +57,33 @@ export const approveOrganizer = async (req, res) => {
     );
 
     if (users.length === 0) {
-      return res.status(404).json({
-        success: false,
-        message: "Organizer not found",
-      });
+      return res.status(404).json({ success: false, message: "Organizer not found" });
     }
 
     await db.query(
-      `UPDATE users
-       SET account_status = 'approved'
-       WHERE id = ?`,
+      "UPDATE users SET account_status = 'approved' WHERE id = ?",
       [userId]
     );
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       message: "Organizer approved successfully",
     });
-
   } catch (error) {
-    console.error(error);
-
-    res.status(500).json({
-      success: false,
-      message: "Server Error",
-    });
+    return sendServerError(res, error);
   }
 };
 
 /**
  * Reject organizer request
- * Changes organizer account status from pending to rejected
+ * Changes organizer account_status from pending to rejected.
  */
 export const rejectOrganizer = async (req, res) => {
   try {
-
     const { userId } = req.params;
 
     const [users] = await db.query(
-      `SELECT * FROM users
+      `SELECT id FROM users
        WHERE id = ?
        AND role = 'organizer'
        AND deleted_at IS NULL`,
@@ -102,30 +91,19 @@ export const rejectOrganizer = async (req, res) => {
     );
 
     if (users.length === 0) {
-      return res.status(404).json({
-        success: false,
-        message: "Organizer not found",
-      });
+      return res.status(404).json({ success: false, message: "Organizer not found" });
     }
 
     await db.query(
-      `UPDATE users
-       SET account_status = 'rejected'
-       WHERE id = ?`,
+      "UPDATE users SET account_status = 'rejected' WHERE id = ?",
       [userId]
     );
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       message: "Organizer rejected successfully",
     });
-
   } catch (error) {
-    console.error(error);
-
-    res.status(500).json({
-      success: false,
-      message: "Server Error",
-    });
+    return sendServerError(res, error);
   }
 };

@@ -6,18 +6,32 @@ import db from "../config/db.js";
  * Persists `created_by` so the database records which privileged user published the course.
  */
 export const createCourse = async (req, res) => {
-  const { title, description } = req.body;
+  try {
+    const { title, description } = req.body;
 
-  const [result] = await db.execute(
-    "INSERT INTO courses (title, description, created_by) VALUES (?, ?, ?)",
-    [title, description, req.user.id]
-  );
+    // Input validation
+    if (!title || !String(title).trim()) {
+      return res.status(400).json({ success: false, message: "Title is required" });
+    }
+    if (!description || !String(description).trim()) {
+      return res.status(400).json({ success: false, message: "Description is required" });
+    }
 
-  res.json({
-    id: result.insertId,
-    title,
-    description,
-  });
+    const [result] = await db.execute(
+      "INSERT INTO courses (title, description, created_by) VALUES (?, ?, ?)",
+      [title.trim(), description.trim(), req.user.id]
+    );
+
+    return res.status(201).json({
+      success: true,
+      id: result.insertId,
+      title,
+      description,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ success: false, message: "Server Error" });
+  }
 };
 
 /**
@@ -26,11 +40,16 @@ export const createCourse = async (req, res) => {
  * Soft-deleted records are hidden to keep retired courses out of learner views.
  */
 export const getCourses = async (req, res) => {
-  const [rows] = await db.execute(
-    "SELECT * FROM courses WHERE deleted_at IS NULL"
-  );
+  try {
+    const [rows] = await db.execute(
+      "SELECT * FROM courses WHERE deleted_at IS NULL"
+    );
 
-  res.json(rows);
+    return res.json({ success: true, data: rows });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ success: false, message: "Server Error" });
+  }
 };
 
 /**
@@ -39,14 +58,19 @@ export const getCourses = async (req, res) => {
  * Soft-deleted courses are treated as unavailable.
  */
 export const getCourseById = async (req, res) => {
-  const [rows] = await db.execute(
-    "SELECT * FROM courses WHERE id = ? AND deleted_at IS NULL",
-    [req.params.id]
-  );
+  try {
+    const [rows] = await db.execute(
+      "SELECT * FROM courses WHERE id = ? AND deleted_at IS NULL",
+      [req.params.id]
+    );
 
-  if (rows.length === 0) {
-    return res.status(404).json({ message: "Course not found" });
+    if (rows.length === 0) {
+      return res.status(404).json({ success: false, message: "Course not found" });
+    }
+
+    return res.json({ success: true, data: rows[0] });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ success: false, message: "Server Error" });
   }
-
-  res.json(rows[0]);
 };

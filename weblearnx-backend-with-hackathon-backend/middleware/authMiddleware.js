@@ -30,7 +30,7 @@ export const protect = async (req, res, next) => {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
     const [rows] = await db.execute(
-      "SELECT id, name, email, role FROM users WHERE id = ?",
+      "SELECT id, name, email, role, account_status FROM users WHERE id = ? AND deleted_at IS NULL",
       [decoded.id]
     );
 
@@ -38,7 +38,14 @@ export const protect = async (req, res, next) => {
       return sendAuthError(res, 401, "Not authorized");
     }
 
-    req.user = rows[0];
+    const user = rows[0];
+
+    // Block organizers whose accounts are not yet approved
+    if (user.role === "organizer" && user.account_status !== "approved") {
+      return sendAuthError(res, 403, "Organizer account pending admin approval");
+    }
+
+    req.user = user;
     next();
   } catch (error) {
     console.error(error);
