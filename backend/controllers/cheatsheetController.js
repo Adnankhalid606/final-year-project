@@ -16,16 +16,13 @@ export const createCheatsheet = async (req, res) => {
     if (!slug || !String(slug).trim()) {
       return res.status(400).json({ success: false, message: "Slug is required" });
     }
-    if (!category || !String(category).trim()) {
-      return res.status(400).json({ success: false, message: "Category is required" });
-    }
     if (!content || !String(content).trim()) {
       return res.status(400).json({ success: false, message: "Content is required" });
     }
 
     const [result] = await db.execute(
       "INSERT INTO cheatsheets (title, slug, category, content, created_by) VALUES (?, ?, ?, ?, ?)",
-      [title.trim(), slug.trim(), category.trim(), content.trim(), req.user.id]
+      [title.trim(), slug.trim(), category?.trim() || null, content.trim(), req.user.id]
     );
 
     return res.status(201).json({ success: true, id: result.insertId, title, slug });
