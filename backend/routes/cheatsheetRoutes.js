@@ -3,6 +3,8 @@ import {
   createCheatsheet,
   getCheatsheets,
   getCheatsheetBySlug,
+  updateCheatsheet,
+  deleteCheatsheet,
 } from "../controllers/cheatsheetController.js";
 
 import { protect, admin } from "../middleware/authMiddleware.js";
@@ -23,5 +25,12 @@ router
  * Protected endpoint for fetching a single active cheatsheet by public identifier.
  */
 router.get("/:slug", protect, getCheatsheetBySlug);
+
+/**
+ * Update and delete routes by ID
+ * Admin-only — update content/metadata or soft-delete a cheatsheet.
+ */
+router.put("/:id", protect, admin, updateCheatsheet);
+router.delete("/:id", protect, admin, deleteCheatsheet);
 
 export default router;

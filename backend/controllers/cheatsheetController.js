@@ -79,3 +79,75 @@ export const getCheatsheetBySlug = async (req, res) => {
     return res.status(500).json({ success: false, message: "Server Error" });
   }
 };
+
+/**
+ * Update Cheatsheet API
+ * Admin-only endpoint for modifying an existing cheatsheet's content and metadata.
+ * Slug changes are allowed but must remain unique across active cheatsheets.
+ */
+export const updateCheatsheet = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { title, slug, category, content } = req.body;
+
+    if (!title || !String(title).trim()) {
+      return res.status(400).json({ success: false, message: "Title is required" });
+    }
+    if (!slug || !String(slug).trim()) {
+      return res.status(400).json({ success: false, message: "Slug is required" });
+    }
+    if (!content || !String(content).trim()) {
+      return res.status(400).json({ success: false, message: "Content is required" });
+    }
+
+    const [existing] = await db.execute(
+      "SELECT id FROM cheatsheets WHERE id = ? AND deleted_at IS NULL",
+      [id]
+    );
+    if (existing.length === 0) {
+      return res.status(404).json({ success: false, message: "Cheatsheet not found" });
+    }
+
+    await db.execute(
+      "UPDATE cheatsheets SET title = ?, slug = ?, category = ?, content = ? WHERE id = ?",
+      [title.trim(), slug.trim(), category?.trim() || null, content.trim(), id]
+    );
+
+    return res.json({ success: true, message: "Cheatsheet updated successfully" });
+  } catch (error) {
+    if (error.code === "ER_DUP_ENTRY") {
+      return res.status(409).json({ success: false, message: "A cheatsheet with this slug already exists" });
+    }
+    console.error(error);
+    return res.status(500).json({ success: false, message: "Server Error" });
+  }
+};
+
+/**
+ * Delete Cheatsheet API
+ * Admin-only soft delete — sets deleted_at so the record is hidden from all queries
+ * without permanently removing it from the database.
+ */
+export const deleteCheatsheet = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const [existing] = await db.execute(
+      "SELECT id FROM cheatsheets WHERE id = ? AND deleted_at IS NULL",
+      [id]
+    );
+    if (existing.length === 0) {
+      return res.status(404).json({ success: false, message: "Cheatsheet not found" });
+    }
+
+    await db.execute(
+      "UPDATE cheatsheets SET deleted_at = CURRENT_TIMESTAMP WHERE id = ?",
+      [id]
+    );
+
+    return res.json({ success: true, message: "Cheatsheet deleted successfully" });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ success: false, message: "Server Error" });
+  }
+};

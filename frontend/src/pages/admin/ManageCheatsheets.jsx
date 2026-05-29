@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
-import { getCheatsheets, createCheatsheet } from '../../api/cheatsheets'
+import { getCheatsheets, createCheatsheet, updateCheatsheet, deleteCheatsheet } from '../../api/cheatsheets'
 
 const STARTER_MD = `# Cheatsheet Title
 
@@ -26,15 +26,31 @@ const greet = (name) => \`Hello \${name}\`
 > Tip: Use markdown for rich formatting
 `
 
+const EMPTY_FORM = { title: '', slug: '', category: '', content: STARTER_MD }
+
+const slugify = (val) =>
+  val.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
+
 export default function ManageCheatsheets() {
-  const [cheatsheets, setCheatsheets] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState('')
-  const [successMsg, setSuccessMsg] = useState('')
-  const [form, setForm] = useState({ title: '', slug: '', category: '', content: STARTER_MD })
-  const [submitting, setSubmitting] = useState(false)
-  const [showForm, setShowForm] = useState(false)
-  const [previewMode, setPreviewMode] = useState('split') // 'write' | 'preview' | 'split'
+  const [cheatsheets, setCheatsheets]   = useState([])
+  const [loading, setLoading]           = useState(true)
+  const [error, setError]               = useState('')
+  const [successMsg, setSuccessMsg]     = useState('')
+
+  // Create form
+  const [form, setForm]                 = useState(EMPTY_FORM)
+  const [submitting, setSubmitting]     = useState(false)
+  const [showForm, setShowForm]         = useState(false)
+  const [previewMode, setPreviewMode]   = useState('split')
+
+  // Edit state
+  const [editingId, setEditingId]       = useState(null)
+  const [editForm, setEditForm]         = useState(EMPTY_FORM)
+  const [editPreview, setEditPreview]   = useState('split')
+  const [saving, setSaving]             = useState(false)
+
+  // Delete state
+  const [deleting, setDeleting]         = useState(null)
 
   const fetchCheatsheets = async () => {
     try {
@@ -49,11 +65,11 @@ export default function ManageCheatsheets() {
 
   useEffect(() => { fetchCheatsheets() }, [])
 
+  // ── Create handlers ──────────────────────────────────────────────────────────
   const handleChange = (e) => {
     const { name, value } = e.target
     if (name === 'title') {
-      const slug = value.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
-      setForm({ ...form, title: value, slug })
+      setForm({ ...form, title: value, slug: slugify(value) })
     } else {
       setForm({ ...form, [name]: value })
     }
@@ -65,12 +81,12 @@ export default function ManageCheatsheets() {
     setSuccessMsg('')
     setSubmitting(true)
     try {
-      const res = await createCheatsheet(form)
-      setCheatsheets((prev) => [...prev, res.data.data ?? res.data])
-      setForm({ title: '', slug: '', category: '', content: STARTER_MD })
+      await createCheatsheet(form)
+      setForm(EMPTY_FORM)
       setShowForm(false)
       setSuccessMsg('Cheatsheet created successfully!')
       setTimeout(() => setSuccessMsg(''), 3000)
+      await fetchCheatsheets()
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to create cheatsheet.')
     } finally {
@@ -78,10 +94,74 @@ export default function ManageCheatsheets() {
     }
   }
 
+  // ── Edit handlers ─────────────────────────────────────────────────────────────
+  const openEdit = (cs) => {
+    setEditingId(cs.id)
+    setEditForm({
+      title:    cs.title    || '',
+      slug:     cs.slug     || '',
+      category: cs.category || '',
+      content:  cs.content  || '',
+    })
+    setEditPreview('split')
+    setError('')
+  }
+
+  const cancelEdit = () => {
+    setEditingId(null)
+    setEditForm(EMPTY_FORM)
+  }
+
+  const handleEditChange = (e) => {
+    const { name, value } = e.target
+    if (name === 'title') {
+      setEditForm(prev => ({ ...prev, title: value, slug: slugify(value) }))
+    } else {
+      setEditForm(prev => ({ ...prev, [name]: value }))
+    }
+  }
+
+  const handleEditSave = async (id) => {
+    setSaving(true)
+    setError('')
+    try {
+      await updateCheatsheet(id, editForm)
+      setCheatsheets(prev =>
+        prev.map(cs => cs.id === id ? { ...cs, ...editForm } : cs)
+      )
+      setSuccessMsg('Cheatsheet updated successfully!')
+      setTimeout(() => setSuccessMsg(''), 3000)
+      cancelEdit()
+    } catch (err) {
+      setError(err.response?.data?.message || 'Failed to update cheatsheet.')
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  // ── Delete handler ────────────────────────────────────────────────────────────
+  const handleDelete = async (id, title) => {
+    if (!window.confirm(`Delete "${title}"? This cannot be undone.`)) return
+    setDeleting(id)
+    setError('')
+    try {
+      await deleteCheatsheet(id)
+      setCheatsheets(prev => prev.filter(cs => cs.id !== id))
+      setSuccessMsg('Cheatsheet deleted successfully.')
+      setTimeout(() => setSuccessMsg(''), 3000)
+    } catch (err) {
+      setError(err.response?.data?.message || 'Failed to delete cheatsheet.')
+    } finally {
+      setDeleting(null)
+    }
+  }
+
   if (loading) {
     return (
       <div className="d-flex justify-content-center align-items-center" style={{ minHeight: '60vh' }}>
-        <div className="spinner-border text-primary" role="status"><span className="visually-hidden">Loading...</span></div>
+        <div className="spinner-border text-primary" role="status">
+          <span className="visually-hidden">Loading...</span>
+        </div>
       </div>
     )
   }
@@ -92,14 +172,14 @@ export default function ManageCheatsheets() {
         <Link to="/admin/dashboard" className="btn btn-outline-secondary btn-sm">← Dashboard</Link>
         <div>
           <h2 className="fw-bold mb-0">Manage Cheatsheets</h2>
-          <p className="text-muted mb-0 small">Create and manage quick reference guides in Markdown</p>
+          <p className="text-muted mb-0 small">Create, edit, and remove quick reference guides</p>
         </div>
       </div>
 
-      {error && <div className="alert alert-danger">{error}</div>}
+      {error      && <div className="alert alert-danger">{error}</div>}
       {successMsg && <div className="alert alert-success">{successMsg}</div>}
 
-      {/* Create Cheatsheet Form */}
+      {/* ── Create Form ─────────────────────────────────────────────────────── */}
       <div className="card border-0 shadow-sm mb-4">
         <div className="card-header bg-white d-flex justify-content-between align-items-center py-3">
           <h6 className="fw-bold mb-0">Create New Cheatsheet</h6>
@@ -111,7 +191,6 @@ export default function ManageCheatsheets() {
         {showForm && (
           <div className="card-body">
             <form onSubmit={handleSubmit}>
-              {/* Title + Slug + Category */}
               <div className="row g-3 mb-3">
                 <div className="col-md-4">
                   <label className="form-label fw-semibold">Title <span className="text-danger">*</span></label>
@@ -131,94 +210,33 @@ export default function ManageCheatsheets() {
                 </div>
               </div>
 
-              {/* Markdown Editor */}
-              <div className="mb-3">
-                <div className="d-flex justify-content-between align-items-center mb-2">
-                  <label className="form-label fw-semibold mb-0">
-                    Content <span className="text-danger">*</span>
-                    <span className="badge bg-primary ms-2" style={{ fontSize: '0.7rem' }}>Markdown</span>
-                  </label>
-                  {/* View toggle */}
-                  <div className="btn-group btn-group-sm">
-                    {['write', 'split', 'preview'].map(mode => (
-                      <button key={mode} type="button"
-                        className={`btn ${previewMode === mode ? 'btn-primary' : 'btn-outline-secondary'}`}
-                        onClick={() => setPreviewMode(mode)}
-                        style={{ textTransform: 'capitalize', fontSize: '0.75rem' }}>
-                        {mode === 'split' ? '⬛ Split' : mode === 'write' ? '✏️ Write' : '👁 Preview'}
-                      </button>
-                    ))}
-                  </div>
-                </div>
+              <MarkdownEditor
+                value={form.content}
+                name="content"
+                onChange={handleChange}
+                previewMode={previewMode}
+                setPreviewMode={setPreviewMode}
+              />
 
-                <div className="d-flex gap-2" style={{ minHeight: 400 }}>
-                  {/* Editor pane */}
-                  {(previewMode === 'write' || previewMode === 'split') && (
-                    <div style={{ flex: 1 }}>
-                      <textarea
-                        className="form-control h-100"
-                        name="content"
-                        value={form.content}
-                        onChange={handleChange}
-                        required
-                        placeholder="Write markdown here..."
-                        style={{
-                          fontFamily: "'Fira Code', 'Courier New', monospace",
-                          fontSize: '0.875rem',
-                          lineHeight: 1.7,
-                          minHeight: 400,
-                          resize: 'vertical',
-                          background: '#ffffff',
-                          color: '#1e293b',
-                          border: '1.5px solid #e2e8f0',
-                          borderRadius: 8,
-                        }}
-                      />
-                    </div>
-                  )}
-
-                  {/* Preview pane */}
-                  {(previewMode === 'preview' || previewMode === 'split') && (
-                    <div style={{
-                      flex: 1,
-                      border: '1px solid #e2e8f0',
-                      borderRadius: 8,
-                      padding: '1rem 1.5rem',
-                      overflowY: 'auto',
-                      minHeight: 400,
-                      background: 'white',
-                    }}>
-                      <div className="markdown-body">
-                        <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                          {form.content || '*Nothing to preview yet...*'}
-                        </ReactMarkdown>
-                      </div>
-                    </div>
-                  )}
-                </div>
-
-                <div className="form-text mt-1">
-                  Supports: **bold**, *italic*, `code`, ```code blocks```, tables, lists, headings, blockquotes
-                </div>
-              </div>
-
-              <button type="submit" className="btn btn-primary" disabled={submitting}>
-                {submitting ? (
-                  <><span className="spinner-border spinner-border-sm me-2" />Creating...</>
-                ) : 'Create Cheatsheet'}
+              <button type="submit" className="btn btn-primary mt-3" disabled={submitting}>
+                {submitting
+                  ? <><span className="spinner-border spinner-border-sm me-2" />Creating...</>
+                  : 'Create Cheatsheet'}
               </button>
             </form>
           </div>
         )}
       </div>
 
-      {/* Cheatsheets List */}
+      {/* ── Cheatsheets List ─────────────────────────────────────────────────── */}
       <div className="card border-0 shadow-sm">
         <div className="card-header bg-white py-3">
           <h6 className="fw-bold mb-0">All Cheatsheets ({cheatsheets.length})</h6>
         </div>
         {cheatsheets.length === 0 ? (
-          <div className="card-body text-center py-5 text-muted">No cheatsheets yet. Create your first one above.</div>
+          <div className="card-body text-center py-5 text-muted">
+            No cheatsheets yet. Create your first one above.
+          </div>
         ) : (
           <div className="table-responsive">
             <table className="table table-hover align-middle mb-0">
@@ -232,20 +250,196 @@ export default function ManageCheatsheets() {
               </thead>
               <tbody>
                 {cheatsheets.map((cs) => (
-                  <tr key={cs.id}>
-                    <td className="fw-semibold">{cs.title}</td>
-                    <td><code className="text-muted">{cs.slug}</code></td>
-                    <td>{cs.category ? <span className="badge bg-secondary">{cs.category}</span> : '—'}</td>
-                    <td className="text-end">
-                      <Link to={`/cheatsheets/${cs.slug}`} className="btn btn-outline-primary btn-sm"
-                        target="_blank" rel="noopener noreferrer">View</Link>
-                    </td>
-                  </tr>
+                  <>
+                    {/* Main row */}
+                    <tr key={cs.id}>
+                      <td className="fw-semibold">{cs.title}</td>
+                      <td><code className="text-muted">{cs.slug}</code></td>
+                      <td>
+                        {cs.category
+                          ? <span className="badge bg-secondary">{cs.category}</span>
+                          : '—'}
+                      </td>
+                      <td className="text-end">
+                        <div className="d-flex gap-2 justify-content-end">
+                          <Link
+                            to={`/cheatsheets/${cs.slug}`}
+                            className="btn btn-outline-secondary btn-sm"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            View
+                          </Link>
+                          <button
+                            className={`btn btn-sm ${editingId === cs.id ? 'btn-secondary' : 'btn-outline-primary'}`}
+                            onClick={() => editingId === cs.id ? cancelEdit() : openEdit(cs)}
+                            disabled={deleting === cs.id}
+                          >
+                            {editingId === cs.id ? 'Cancel' : 'Edit'}
+                          </button>
+                          <button
+                            className="btn btn-outline-danger btn-sm"
+                            onClick={() => handleDelete(cs.id, cs.title)}
+                            disabled={deleting === cs.id || editingId === cs.id}
+                          >
+                            {deleting === cs.id
+                              ? <span className="spinner-border spinner-border-sm" />
+                              : 'Delete'}
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+
+                    {/* Inline edit row */}
+                    {editingId === cs.id && (
+                      <tr key={`edit-${cs.id}`} className="table-light">
+                        <td colSpan={4} className="p-4">
+                          <div className="row g-3 mb-3">
+                            <div className="col-md-4">
+                              <label className="form-label fw-semibold small">Title <span className="text-danger">*</span></label>
+                              <input
+                                type="text"
+                                className="form-control form-control-sm"
+                                name="title"
+                                value={editForm.title}
+                                onChange={handleEditChange}
+                                required
+                              />
+                            </div>
+                            <div className="col-md-4">
+                              <label className="form-label fw-semibold small">Slug <span className="text-danger">*</span></label>
+                              <input
+                                type="text"
+                                className="form-control form-control-sm"
+                                name="slug"
+                                value={editForm.slug}
+                                onChange={handleEditChange}
+                                required
+                              />
+                            </div>
+                            <div className="col-md-4">
+                              <label className="form-label fw-semibold small">Category</label>
+                              <input
+                                type="text"
+                                className="form-control form-control-sm"
+                                name="category"
+                                value={editForm.category}
+                                onChange={handleEditChange}
+                                placeholder="e.g. JavaScript, CSS"
+                              />
+                            </div>
+                          </div>
+
+                          <MarkdownEditor
+                            value={editForm.content}
+                            name="content"
+                            onChange={handleEditChange}
+                            previewMode={editPreview}
+                            setPreviewMode={setEditPreview}
+                          />
+
+                          <div className="d-flex gap-2 mt-3">
+                            <button
+                              className="btn btn-primary btn-sm"
+                              onClick={() => handleEditSave(cs.id)}
+                              disabled={saving}
+                            >
+                              {saving
+                                ? <><span className="spinner-border spinner-border-sm me-1" />Saving...</>
+                                : 'Save Changes'}
+                            </button>
+                            <button
+                              className="btn btn-outline-secondary btn-sm"
+                              onClick={cancelEdit}
+                              disabled={saving}
+                            >
+                              Cancel
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    )}
+                  </>
                 ))}
               </tbody>
             </table>
           </div>
         )}
+      </div>
+    </div>
+  )
+}
+
+// ── Shared Markdown editor component ─────────────────────────────────────────
+function MarkdownEditor({ value, name, onChange, previewMode, setPreviewMode }) {
+  return (
+    <div className="mb-3">
+      <div className="d-flex justify-content-between align-items-center mb-2">
+        <label className="form-label fw-semibold mb-0">
+          Content <span className="text-danger">*</span>
+          <span className="badge bg-primary ms-2" style={{ fontSize: '0.7rem' }}>Markdown</span>
+        </label>
+        <div className="btn-group btn-group-sm">
+          {['write', 'split', 'preview'].map(mode => (
+            <button
+              key={mode}
+              type="button"
+              className={`btn ${previewMode === mode ? 'btn-primary' : 'btn-outline-secondary'}`}
+              onClick={() => setPreviewMode(mode)}
+              style={{ textTransform: 'capitalize', fontSize: '0.75rem' }}
+            >
+              {mode === 'split' ? '⬛ Split' : mode === 'write' ? '✏️ Write' : '👁 Preview'}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="d-flex gap-2" style={{ minHeight: 400 }}>
+        {(previewMode === 'write' || previewMode === 'split') && (
+          <div style={{ flex: 1 }}>
+            <textarea
+              className="form-control h-100"
+              name={name}
+              value={value}
+              onChange={onChange}
+              required
+              placeholder="Write markdown here..."
+              style={{
+                fontFamily: "'Fira Code', 'Courier New', monospace",
+                fontSize: '0.875rem',
+                lineHeight: 1.7,
+                minHeight: 400,
+                resize: 'vertical',
+                background: '#ffffff',
+                color: '#1e293b',
+                border: '1.5px solid #e2e8f0',
+                borderRadius: 8,
+              }}
+            />
+          </div>
+        )}
+
+        {(previewMode === 'preview' || previewMode === 'split') && (
+          <div style={{
+            flex: 1,
+            border: '1px solid #e2e8f0',
+            borderRadius: 8,
+            padding: '1rem 1.5rem',
+            overflowY: 'auto',
+            minHeight: 400,
+            background: 'white',
+          }}>
+            <div className="markdown-body">
+              <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                {value || '*Nothing to preview yet...*'}
+              </ReactMarkdown>
+            </div>
+          </div>
+        )}
+      </div>
+
+      <div className="form-text mt-1">
+        Supports: **bold**, *italic*, `code`, ```code blocks```, tables, lists, headings, blockquotes
       </div>
     </div>
   )

@@ -3,6 +3,8 @@ import {
   createCourse,
   getCourses,
   getCourseById,
+  updateCourse,
+  deleteCourse,
 } from "../controllers/courseController.js";
 
 import { protect, admin } from "../middleware/authMiddleware.js";
@@ -22,9 +24,13 @@ router
   .post(protect, admin, createCourse);
 
 /**
- * Course detail route
- * Protected endpoint for loading one active course.
+ * Course detail, update, and delete routes
+ * GET is protected for authenticated users; PUT and DELETE are admin-only.
  */
-router.route("/:id").get(protect, getCourseById);
+router
+  .route("/:id")
+  .get(protect, getCourseById)
+  .put(protect, admin, updateCourse)
+  .delete(protect, admin, deleteCourse);
 
 export default router;
