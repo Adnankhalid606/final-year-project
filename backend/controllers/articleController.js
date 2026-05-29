@@ -87,3 +87,67 @@ export const getArticleById = async (req, res) => {
     return res.status(500).json({ success: false, message: "Server Error" });
   }
 };
+
+/**
+ * Update Article API
+ * Admin-only endpoint for modifying an existing article's title, content, and order.
+ */
+export const updateArticle = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { title, content, order } = req.body;
+
+    if (!title || !String(title).trim()) {
+      return res.status(400).json({ success: false, message: "Title is required" });
+    }
+    if (!content || !String(content).trim()) {
+      return res.status(400).json({ success: false, message: "Content is required" });
+    }
+
+    const [existing] = await db.execute(
+      "SELECT id FROM articles WHERE id = ? AND deleted_at IS NULL",
+      [id]
+    );
+    if (existing.length === 0) {
+      return res.status(404).json({ success: false, message: "Article not found" });
+    }
+
+    await db.execute(
+      "UPDATE articles SET title = ?, content = ?, `order` = ? WHERE id = ?",
+      [title.trim(), content.trim(), order ?? null, id]
+    );
+
+    return res.json({ success: true, message: "Article updated successfully" });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ success: false, message: "Server Error" });
+  }
+};
+
+/**
+ * Delete Article API
+ * Admin-only soft delete — sets deleted_at to hide the article from learner views.
+ */
+export const deleteArticle = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const [existing] = await db.execute(
+      "SELECT id FROM articles WHERE id = ? AND deleted_at IS NULL",
+      [id]
+    );
+    if (existing.length === 0) {
+      return res.status(404).json({ success: false, message: "Article not found" });
+    }
+
+    await db.execute(
+      "UPDATE articles SET deleted_at = CURRENT_TIMESTAMP WHERE id = ?",
+      [id]
+    );
+
+    return res.json({ success: true, message: "Article deleted successfully" });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ success: false, message: "Server Error" });
+  }
+};

@@ -3,6 +3,8 @@ import {
   createArticle,
   getArticlesByCourse,
   getArticleById,
+  updateArticle,
+  deleteArticle,
 } from "../controllers/articleController.js";
 
 import { protect, admin } from "../middleware/authMiddleware.js";
@@ -22,9 +24,10 @@ router.post("/", protect, admin, createArticle);
 router.get("/course/:courseId", protect, getArticlesByCourse);
 
 /**
- * Single article route
- * Protected endpoint for reading one active article record.
+ * Single article route — GET for all authenticated users, PUT/DELETE for admins only.
  */
 router.get("/:id", protect, getArticleById);
+router.put("/:id", protect, admin, updateArticle);
+router.delete("/:id", protect, admin, deleteArticle);
 
 export default router;
