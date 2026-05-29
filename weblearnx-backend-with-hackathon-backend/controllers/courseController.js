@@ -37,18 +37,23 @@ export const createCourse = async (req, res) => {
 /**
  * List Courses API
  * Returns all active courses available in the platform catalog.
+ * Supports optional ?search= query param to filter by title.
  * Soft-deleted records are hidden to keep retired courses out of learner views.
  */
 export const getCourses = async (req, res) => {
   try {
-    const [rows] = await db.execute(
-      "SELECT * FROM courses WHERE deleted_at IS NULL"
-    );
-
-    return res.json({ success: true, data: rows });
+    const { search } = req.query
+    let query = 'SELECT * FROM courses WHERE deleted_at IS NULL'
+    const params = []
+    if (search) {
+      query += ' AND title LIKE ?'
+      params.push(`%${search}%`)
+    }
+    const [rows] = await db.execute(query, params)
+    return res.json({ success: true, data: rows })
   } catch (error) {
-    console.error(error);
-    return res.status(500).json({ success: false, message: "Server Error" });
+    console.error(error)
+    return res.status(500).json({ success: false, message: 'Server Error' })
   }
 };
 

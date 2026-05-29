@@ -9,6 +9,9 @@ import { protect, admin } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
+// Public route — no auth needed, for landing page preview
+router.get('/public', getCourses)
+
 /**
  * Course route group
  * Reading course data requires authentication, while course creation is admin-only.

@@ -5,6 +5,7 @@ import {
   createHackathon,
   deleteHackathon,
   getHackathons,
+  getHackathonById,
   getUserBookmarks,
   updateHackathon,
 } from "../controllers/hackathonController.js";
@@ -69,6 +70,11 @@ router.delete(
   authorizeRoles("user"),
   removeBookmark
 );
+
+/**
+ * Get single hackathon by ID
+ */
+router.get("/:hackathonId", getHackathonById);
 
 /**
  * Update route

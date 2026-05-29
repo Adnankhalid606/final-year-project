@@ -4,6 +4,10 @@ import {
   getPendingOrganizers,
   approveOrganizer,
   rejectOrganizer,
+  getAllUsers,
+  deleteUser,
+  getAllHackathons,
+  updateHackathonStatus,
 } from "../controllers/adminController.js";
 
 import {
@@ -42,5 +46,25 @@ router.put(
   admin,
   rejectOrganizer
 );
+
+/**
+ * Get all users
+ */
+router.get("/users", protect, admin, getAllUsers);
+
+/**
+ * Delete (soft delete) a user
+ */
+router.delete("/users/:userId", protect, admin, deleteUser);
+
+/**
+ * Get all hackathons (admin view)
+ */
+router.get("/hackathons", protect, admin, getAllHackathons);
+
+/**
+ * Update hackathon status (admin only)
+ */
+router.patch("/hackathons/:hackathonId/status", protect, admin, updateHackathonStatus);
 
 export default router;

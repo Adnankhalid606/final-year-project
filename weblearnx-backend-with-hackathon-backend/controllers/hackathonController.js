@@ -59,6 +59,23 @@ const canManageHackathon = (user, hackathon) => {
 };
 
 /**
+ * Get Single Hackathon API
+ * Fetches one active hackathon by ID.
+ */
+export const getHackathonById = async (req, res) => {
+  try {
+    const { hackathonId } = req.params;
+    const hackathon = await getActiveHackathonById(hackathonId);
+    if (!hackathon) {
+      return sendError(res, 404, "Hackathon not found");
+    }
+    return sendSuccess(res, 200, "Hackathon fetched successfully", hackathon);
+  } catch (error) {
+    return sendServerError(res, error);
+  }
+};
+
+/**
  * Create Hackathon API
  * Allows organizers and admins to create external hackathon listings.
  * Organizer ownership is derived from the authenticated JWT user instead of client input.
@@ -177,6 +194,9 @@ export const updateHackathon = async (req, res) => {
       return sendError(res, 403, "You can only edit your own hackathons");
     }
 
+    // Use existing status if not provided in request
+    const newStatus = status !== undefined ? status : hackathon.status;
+
     // Validate status value if provided
     const allowedStatuses = ["upcoming", "active", "completed"];
     if (status !== undefined && !allowedStatuses.includes(status)) {
@@ -201,7 +221,7 @@ export const updateHackathon = async (req, res) => {
         registration_link,
         start_date,
         end_date,
-        status,
+        newStatus,
         hackathonId,
       ]
     );

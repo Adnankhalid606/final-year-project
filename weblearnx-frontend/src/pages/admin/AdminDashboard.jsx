@@ -42,15 +42,29 @@ export default function AdminDashboard() {
     },
     {
       title: 'Hackathons',
-      description: 'Browse all hackathons across the platform.',
-      link: '/hackathons',
+      description: 'Control hackathon status (upcoming, active, completed) and remove listings.',
+      link: '/admin/hackathons',
       icon: (
         <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" viewBox="0 0 16 16">
           <path d="M14 1a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H4.414A2 2 0 0 0 3 11.586l-2 2V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12.793a.5.5 0 0 0 .854.353l2.853-2.853A1 1 0 0 1 4.414 12H14a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z"/>
         </svg>
       ),
       color: 'info',
-      btnLabel: 'View Hackathons',
+      btnLabel: 'Manage Hackathons',
+    },
+    {
+      title: 'Manage Users',
+      description: 'View all users, check their roles and account status, delete accounts.',
+      link: '/admin/users',
+      icon: (
+        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" viewBox="0 0 16 16">
+          <path d="M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1H7zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
+          <path fillRule="evenodd" d="M5.216 14A2.238 2.238 0 0 1 5 13c0-1.355.68-2.75 1.936-3.72A6.325 6.325 0 0 0 5 9c-4 0-5 3-5 4s1 1 1 1h4.216z"/>
+          <path d="M4.5 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z"/>
+        </svg>
+      ),
+      color: 'danger',
+      btnLabel: 'Manage Users',
     },
   ]
 

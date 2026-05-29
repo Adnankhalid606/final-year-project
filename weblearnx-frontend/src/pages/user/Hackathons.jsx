@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
-import { getHackathons, bookmarkHackathon } from '../../api/hackathons'
+import { getHackathons, bookmarkHackathon, getMyBookmarks } from '../../api/hackathons'
 import { useAuth } from '../../context/AuthContext'
 
 function StatusBadge({ status }) {
@@ -44,6 +44,13 @@ export default function Hackathons() {
 
   useEffect(() => {
     fetchHackathons()
+    if (user?.role === 'user') {
+      getMyBookmarks().then(res => {
+        const data = res.data.data ?? res.data
+        const ids = new Set(data.map(b => b.id || b.hackathon_id))
+        setBookmarkedIds(ids)
+      }).catch(() => {})
+    }
   }, [fetchHackathons])
 
   const handleBookmark = async (hackathonId) => {

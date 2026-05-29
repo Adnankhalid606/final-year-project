@@ -1,109 +1,139 @@
 import { Link } from 'react-router-dom'
+import { motion } from 'framer-motion'
 import { useAuth } from '../../context/AuthContext'
+
+const fadeUp = { hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }
+const stagger = { visible: { transition: { staggerChildren: 0.1 } } }
 
 export default function Home() {
   const { user } = useAuth()
 
+  const quickLinks = [
+    {
+      icon: '📚', title: 'Courses', desc: 'Structured learning paths with progress tracking.',
+      link: '/courses', btnLabel: 'Browse Courses', color: '#6366f1', bg: 'rgba(99,102,241,0.1)',
+    },
+    {
+      icon: '🏆', title: 'Hackathons', desc: 'Discover and join the best hackathons worldwide.',
+      link: '/hackathons', btnLabel: 'Explore Hackathons', color: '#10b981', bg: 'rgba(16,185,129,0.1)',
+    },
+    {
+      icon: '⚡', title: 'Cheatsheets', desc: 'Quick-reference guides for every language and framework.',
+      link: '/cheatsheets', btnLabel: 'View Cheatsheets', color: '#f59e0b', bg: 'rgba(245,158,11,0.1)',
+    },
+    ...(user?.role === 'user' ? [{
+      icon: '🔖', title: 'Bookmarks', desc: 'All your saved hackathons in one place.',
+      link: '/bookmarks', btnLabel: 'My Bookmarks', color: '#06b6d4', bg: 'rgba(6,182,212,0.1)',
+    }] : []),
+    ...(user?.role === 'organizer' ? [{
+      icon: '🎯', title: 'My Hackathons', desc: 'Manage your hackathon listings and track registrations.',
+      link: '/organizer/dashboard', btnLabel: 'Go to Dashboard', color: '#8b5cf6', bg: 'rgba(139,92,246,0.1)',
+    }] : []),
+    ...(user?.role === 'admin' ? [{
+      icon: '⚙️', title: 'Admin Panel', desc: 'Manage users, courses, cheatsheets, and organizers.',
+      link: '/admin/dashboard', btnLabel: 'Open Admin', color: '#ef4444', bg: 'rgba(239,68,68,0.1)',
+    }] : []),
+  ]
+
+  const firstName = user?.name?.split(' ')[0] || user?.email?.split('@')[0] || 'there'
+
   return (
-    <div>
-      {/* Hero Section */}
-      <div className="bg-primary text-white py-5">
-        <div className="container py-4">
-          <div className="row align-items-center">
-            <div className="col-lg-7">
-              <h1 className="display-4 fw-bold mb-3">
-                Welcome back, {user?.name || user?.email}!
-              </h1>
-              <p className="lead mb-4 opacity-75">
-                Continue your learning journey. Explore courses, read articles, track your progress, and discover hackathons.
-              </p>
-              <div className="d-flex gap-3 flex-wrap">
-                <Link to="/courses" className="btn btn-light btn-lg fw-semibold">
-                  Browse Courses
-                </Link>
-                <Link to="/hackathons" className="btn btn-outline-light btn-lg">
-                  Explore Hackathons
-                </Link>
-              </div>
-            </div>
-            <div className="col-lg-5 d-none d-lg-flex justify-content-center">
-              <div className="text-center opacity-50">
-                <svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" fill="currentColor" viewBox="0 0 16 16">
-                  <path d="M1 2.828c.885-.37 2.154-.769 3.388-.893 1.33-.134 2.458.063 3.112.752v9.746c-.935-.53-2.12-.603-3.213-.493-1.18.12-2.37.461-3.287.811V2.828zm7.5-.141c.654-.689 1.782-.886 3.112-.752 1.234.124 2.503.523 3.388.893v9.923c-.918-.35-2.107-.692-3.287-.81-1.094-.111-2.278-.039-3.213.492V2.687zM8 1.783C7.015.936 5.587.81 4.287.94c-1.514.153-3.042.672-3.994 1.105A.5.5 0 0 0 0 2.5v11a.5.5 0 0 0 .707.455c.882-.4 2.303-.881 3.68-1.02 1.409-.142 2.59.087 3.223.877a.5.5 0 0 0 .78 0c.633-.79 1.814-1.019 3.222-.877 1.378.139 2.8.62 3.681 1.02A.5.5 0 0 0 16 13.5v-11a.5.5 0 0 0-.293-.455c-.952-.433-2.48-.952-3.994-1.105C10.413.809 8.985.936 8 1.783z"/>
-                </svg>
-              </div>
-            </div>
-          </div>
+    <div style={{ background: '#fafafa', minHeight: '100vh' }}>
+
+      {/* ── HERO BANNER ── */}
+      <div style={{
+        background: 'linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #312e81 100%)',
+        padding: '4rem 0 5rem',
+        position: 'relative',
+        overflow: 'hidden',
+      }}>
+        {/* Glow blobs */}
+        <div style={{ position: 'absolute', top: -100, right: -100, width: 400, height: 400, background: 'radial-gradient(circle, rgba(99,102,241,0.25) 0%, transparent 70%)', borderRadius: '50%', pointerEvents: 'none' }} />
+        <div style={{ position: 'absolute', bottom: -80, left: -80, width: 300, height: 300, background: 'radial-gradient(circle, rgba(139,92,246,0.2) 0%, transparent 70%)', borderRadius: '50%', pointerEvents: 'none' }} />
+
+        <div className="container" style={{ position: 'relative', zIndex: 1 }}>
+          <motion.div initial="hidden" animate="visible" variants={stagger}>
+            <motion.div variants={fadeUp}>
+              <span style={{
+                display: 'inline-flex', alignItems: 'center', gap: 6,
+                background: 'rgba(99,102,241,0.2)', color: '#a5b4fc',
+                border: '1px solid rgba(99,102,241,0.3)', borderRadius: 50,
+                padding: '0.3rem 1rem', fontSize: '0.8rem', fontWeight: 600,
+                letterSpacing: '0.05em', textTransform: 'uppercase', marginBottom: '1.25rem',
+              }}>
+                👋 Welcome back
+              </span>
+            </motion.div>
+
+            <motion.h1 variants={fadeUp} style={{
+              fontFamily: 'Poppins, sans-serif', fontWeight: 800,
+              fontSize: 'clamp(2rem, 5vw, 3.5rem)', color: 'white',
+              lineHeight: 1.1, marginBottom: '1rem', letterSpacing: '-0.03em',
+            }}>
+              Hey, <span style={{ background: 'linear-gradient(135deg, #a5b4fc, #818cf8)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>{firstName}</span>! 👋
+            </motion.h1>
+
+            <motion.p variants={fadeUp} style={{ color: 'rgba(255,255,255,0.65)', fontSize: '1.1rem', maxWidth: 520, lineHeight: 1.7, marginBottom: '2rem' }}>
+              Continue your learning journey. Explore courses, track your progress, and discover the latest hackathons.
+            </motion.p>
+
+            <motion.div variants={fadeUp} className="d-flex gap-3 flex-wrap">
+              <Link to="/courses" className="btn btn-light btn-lg px-4 py-2">
+                Continue Learning →
+              </Link>
+              <Link to="/hackathons" className="btn btn-outline-light btn-lg px-4 py-2">
+                Browse Hackathons
+              </Link>
+            </motion.div>
+          </motion.div>
         </div>
       </div>
 
-      {/* Feature Cards */}
-      <div className="container py-5">
-        <h2 className="text-center fw-bold mb-5">What would you like to do today?</h2>
-        <div className="row g-4">
-          <div className="col-md-6 col-lg-3">
-            <div className="card h-100 border-0 shadow-sm text-center p-3">
-              <div className="card-body">
-                <div className="bg-primary bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style={{ width: 64, height: 64 }}>
-                  <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="#0d6efd" viewBox="0 0 16 16">
-                    <path d="M1 2.828c.885-.37 2.154-.769 3.388-.893 1.33-.134 2.458.063 3.112.752v9.746c-.935-.53-2.12-.603-3.213-.493-1.18.12-2.37.461-3.287.811V2.828zm7.5-.141c.654-.689 1.782-.886 3.112-.752 1.234.124 2.503.523 3.388.893v9.923c-.918-.35-2.107-.692-3.287-.81-1.094-.111-2.278-.039-3.213.492V2.687zM8 1.783C7.015.936 5.587.81 4.287.94c-1.514.153-3.042.672-3.994 1.105A.5.5 0 0 0 0 2.5v11a.5.5 0 0 0 .707.455c.882-.4 2.303-.881 3.68-1.02 1.409-.142 2.59.087 3.223.877a.5.5 0 0 0 .78 0c.633-.79 1.814-1.019 3.222-.877 1.378.139 2.8.62 3.681 1.02A.5.5 0 0 0 16 13.5v-11a.5.5 0 0 0-.293-.455c-.952-.433-2.48-.952-3.994-1.105C10.413.809 8.985.936 8 1.783z"/>
-                  </svg>
-                </div>
-                <h5 className="fw-bold">Courses</h5>
-                <p className="text-muted small">Structured learning paths with articles and progress tracking.</p>
-                <Link to="/courses" className="btn btn-primary btn-sm">View Courses</Link>
-              </div>
-            </div>
-          </div>
-
-          <div className="col-md-6 col-lg-3">
-            <div className="card h-100 border-0 shadow-sm text-center p-3">
-              <div className="card-body">
-                <div className="bg-success bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style={{ width: 64, height: 64 }}>
-                  <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="#198754" viewBox="0 0 16 16">
-                    <path d="M14 1a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H4.414A2 2 0 0 0 3 11.586l-2 2V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12.793a.5.5 0 0 0 .854.353l2.853-2.853A1 1 0 0 1 4.414 12H14a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z"/>
-                  </svg>
-                </div>
-                <h5 className="fw-bold">Hackathons</h5>
-                <p className="text-muted small">Discover upcoming hackathons and bookmark your favorites.</p>
-                <Link to="/hackathons" className="btn btn-success btn-sm">Browse Hackathons</Link>
-              </div>
-            </div>
-          </div>
-
-          <div className="col-md-6 col-lg-3">
-            <div className="card h-100 border-0 shadow-sm text-center p-3">
-              <div className="card-body">
-                <div className="bg-warning bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style={{ width: 64, height: 64 }}>
-                  <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="#ffc107" viewBox="0 0 16 16">
-                    <path d="M14 4.5V14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h5.5L14 4.5zm-3 0A1.5 1.5 0 0 1 9.5 3V1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V4.5h-2z"/>
-                  </svg>
-                </div>
-                <h5 className="fw-bold">Cheatsheets</h5>
-                <p className="text-muted small">Quick reference guides for languages and frameworks.</p>
-                <Link to="/cheatsheets" className="btn btn-warning btn-sm">View Cheatsheets</Link>
-              </div>
-            </div>
-          </div>
-
-          {user?.role === 'user' && (
-            <div className="col-md-6 col-lg-3">
-              <div className="card h-100 border-0 shadow-sm text-center p-3">
-                <div className="card-body">
-                  <div className="bg-info bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style={{ width: 64, height: 64 }}>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="#0dcaf0" viewBox="0 0 16 16">
-                      <path d="M2 2v13.5a.5.5 0 0 0 .74.439L8 13.069l5.26 2.87A.5.5 0 0 0 14 15.5V2a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2z"/>
-                    </svg>
+      {/* ── QUICK LINKS ── */}
+      <div className="container" style={{ marginTop: '-2rem', position: 'relative', zIndex: 2, paddingBottom: '4rem' }}>
+        <motion.div initial="hidden" animate="visible" variants={stagger} className="row g-4">
+          {quickLinks.map((item) => (
+            <div key={item.title} className={`col-md-6 col-lg-${quickLinks.length <= 3 ? '4' : '3'}`}>
+              <motion.div variants={fadeUp}>
+                <div className="card h-100 p-4" style={{ borderTop: `3px solid ${item.color}` }}>
+                  <div style={{
+                    width: 52, height: 52, borderRadius: 14,
+                    background: item.bg, display: 'flex',
+                    alignItems: 'center', justifyContent: 'center',
+                    fontSize: '1.5rem', marginBottom: '1rem',
+                  }}>
+                    {item.icon}
                   </div>
-                  <h5 className="fw-bold">Bookmarks</h5>
-                  <p className="text-muted small">Access your saved hackathons in one place.</p>
-                  <Link to="/bookmarks" className="btn btn-info btn-sm text-white">My Bookmarks</Link>
+                  <h5 className="fw-bold mb-2">{item.title}</h5>
+                  <p className="text-muted small mb-4" style={{ lineHeight: 1.6 }}>{item.desc}</p>
+                  <Link to={item.link} className="btn btn-sm mt-auto" style={{
+                    background: item.bg, color: item.color,
+                    border: `1px solid ${item.color}30`,
+                    fontWeight: 600, borderRadius: 8,
+                  }}>
+                    {item.btnLabel} →
+                  </Link>
                 </div>
-              </div>
+              </motion.div>
             </div>
-          )}
-        </div>
+          ))}
+        </motion.div>
+
+        {/* ── TIPS BANNER ── */}
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }}
+          className="mt-5 p-4 d-flex align-items-center gap-4 flex-wrap"
+          style={{ background: 'linear-gradient(135deg, rgba(99,102,241,0.08), rgba(139,92,246,0.08))', borderRadius: 16, border: '1px solid rgba(99,102,241,0.15)' }}>
+          <div style={{ fontSize: '2.5rem' }}>💡</div>
+          <div className="flex-grow-1">
+            <div className="fw-bold mb-1" style={{ color: '#1e293b' }}>Pro Tip</div>
+            <div className="text-muted small">Use the Cheatsheets section for quick reference while coding. Mark articles as complete to track your course progress.</div>
+          </div>
+          <Link to="/cheatsheets" className="btn btn-primary btn-sm px-4">
+            Open Cheatsheets
+          </Link>
+        </motion.div>
       </div>
+
     </div>
   )
 }

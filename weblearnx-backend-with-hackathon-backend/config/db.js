@@ -5,6 +5,14 @@ dotenv.config();
 
 const isProduction = process.env.NODE_ENV === "production";
 
+if (isProduction) {
+  const required = ['DB_HOST', 'DB_PORT', 'DB_USER', 'DB_PASSWORD', 'DB_NAME']
+  const missing = required.filter(k => !process.env[k])
+  if (missing.length > 0) {
+    throw new Error(`Missing required production env vars: ${missing.join(', ')}`)
+  }
+}
+
 /**
  * Database connection config
  * - Development: connects to local XAMPP MySQL using .env values

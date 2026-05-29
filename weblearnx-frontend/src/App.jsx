@@ -1,7 +1,10 @@
-import { Routes, Route, Navigate } from 'react-router-dom'
+import { Routes, Route } from 'react-router-dom'
 import Navbar from './components/Navbar'
 import ProtectedRoute from './components/ProtectedRoute'
 import RoleRoute from './components/RoleRoute'
+
+// Public pages
+import Landing from './pages/public/Landing'
 
 // Auth pages
 import Login from './pages/auth/Login'
@@ -16,6 +19,7 @@ import Hackathons from './pages/user/Hackathons'
 import Bookmarks from './pages/user/Bookmarks'
 import Cheatsheets from './pages/user/Cheatsheets'
 import CheatsheetDetail from './pages/user/CheatsheetDetail'
+import Profile from './pages/user/Profile'
 
 // Organizer pages
 import OrganizerDashboard from './pages/organizer/OrganizerDashboard'
@@ -27,6 +31,9 @@ import PendingOrganizers from './pages/admin/PendingOrganizers'
 import ManageCourses from './pages/admin/ManageCourses'
 import ManageArticles from './pages/admin/ManageArticles'
 import ManageCheatsheets from './pages/admin/ManageCheatsheets'
+import ManageUsers from './pages/admin/ManageUsers'
+import ManageHackathons from './pages/admin/ManageHackathons'
+import NotFound from './pages/NotFound'
 
 export default function App() {
   return (
@@ -34,13 +41,14 @@ export default function App() {
       <Navbar />
       <main className="flex-grow-1">
         <Routes>
-          {/* Public routes */}
+          {/* Public routes — no login needed */}
+          <Route path="/" element={<Landing />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
 
-          {/* Protected routes — any authenticated user */}
+          {/* Protected dashboard — logged-in users */}
           <Route
-            path="/"
+            path="/dashboard"
             element={
               <ProtectedRoute>
                 <Home />
@@ -113,6 +121,14 @@ export default function App() {
               </RoleRoute>
             }
           />
+          <Route
+            path="/profile"
+            element={
+              <ProtectedRoute>
+                <Profile />
+              </ProtectedRoute>
+            }
+          />
 
           {/* Organizer routes */}
           <Route
@@ -181,15 +197,31 @@ export default function App() {
               </RoleRoute>
             }
           />
+          <Route
+            path="/admin/users"
+            element={
+              <RoleRoute roles={['admin']}>
+                <ManageUsers />
+              </RoleRoute>
+            }
+          />
+          <Route
+            path="/admin/hackathons"
+            element={
+              <RoleRoute roles={['admin']}>
+                <ManageHackathons />
+              </RoleRoute>
+            }
+          />
 
-          {/* Catch-all */}
-          <Route path="*" element={<Navigate to="/" replace />} />
+          {/* Catch-all — 404 */}
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
 
       <footer className="bg-white border-top py-3 mt-auto">
         <div className="container text-center text-muted small">
-          © {new Date().getFullYear()} WebLearnX. All rights reserved.
+          © {new Date().getFullYear()} DEVSIQ. All rights reserved.
         </div>
       </footer>
     </div>

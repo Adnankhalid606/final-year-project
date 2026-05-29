@@ -107,3 +107,103 @@ export const rejectOrganizer = async (req, res) => {
     return sendServerError(res, error);
   }
 };
+
+/**
+ * Get all users
+ */
+export const getAllUsers = async (req, res) => {
+  try {
+    const [users] = await db.query(`
+      SELECT id, name, email, role, account_status, created_at
+      FROM users
+      WHERE deleted_at IS NULL
+      ORDER BY created_at DESC
+    `)
+    return res.status(200).json({ success: true, data: users })
+  } catch (error) {
+    return sendServerError(res, error)
+  }
+}
+
+/**
+ * Get all hackathons (admin view — includes soft-deleted)
+ */
+export const getAllHackathons = async (req, res) => {
+  try {
+    const [hackathons] = await db.query(`
+      SELECT
+        hackathons.*,
+        users.name AS organizer_name
+      FROM hackathons
+      LEFT JOIN users ON hackathons.organizer_id = users.id
+      WHERE hackathons.deleted_at IS NULL
+      ORDER BY hackathons.created_at DESC
+    `);
+    return res.status(200).json({ success: true, data: hackathons });
+  } catch (error) {
+    return sendServerError(res, error);
+  }
+};
+
+/**
+ * Update hackathon status (admin only)
+ * Allows admin to change status between upcoming, active, and completed.
+ */
+export const updateHackathonStatus = async (req, res) => {
+  try {
+    const { hackathonId } = req.params;
+    const { status } = req.body;
+
+    const allowedStatuses = ["upcoming", "active", "completed"];
+    if (!status || !allowedStatuses.includes(status)) {
+      return res.status(400).json({
+        success: false,
+        message: "Status must be one of: upcoming, active, completed",
+      });
+    }
+
+    const [rows] = await db.query(
+      "SELECT id FROM hackathons WHERE id = ? AND deleted_at IS NULL",
+      [hackathonId]
+    );
+
+    if (rows.length === 0) {
+      return res.status(404).json({ success: false, message: "Hackathon not found" });
+    }
+
+    await db.query(
+      "UPDATE hackathons SET status = ? WHERE id = ?",
+      [status, hackathonId]
+    );
+
+    return res.status(200).json({
+      success: true,
+      message: "Hackathon status updated successfully",
+    });
+  } catch (error) {
+    return sendServerError(res, error);
+  }
+};
+
+/**
+ * Delete (soft delete) a user
+ */
+export const deleteUser = async (req, res) => {
+  try {
+    const { userId } = req.params
+    const [users] = await db.query(
+      'SELECT id FROM users WHERE id = ? AND deleted_at IS NULL',
+      [userId]
+    )
+    if (users.length === 0) {
+      return res.status(404).json({ success: false, message: 'User not found' })
+    }
+    await db.query(
+      'UPDATE users SET deleted_at = CURRENT_TIMESTAMP WHERE id = ?',
+      [userId]
+    )
+    return res.status(200).json({ success: true, message: 'User deleted successfully' })
+  } catch (error) {
+    return sendServerError(res, error)
+  }
+}
