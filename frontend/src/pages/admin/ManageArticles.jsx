@@ -3,7 +3,8 @@ import { useParams, Link } from 'react-router-dom'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import { getCourse } from '../../api/courses'
-import { getArticlesByCourse, createArticle } from '../../api/articles'
+import { createArticle } from '../../api/articles'
+import { getAdminArticlesByCourse } from '../../api/admin'
 
 const ARTICLE_STARTER = `## Introduction
 
@@ -43,7 +44,7 @@ export default function ManageArticles() {
     try {
       const [courseRes, articlesRes] = await Promise.all([
         getCourse(courseId),
-        getArticlesByCourse(courseId),
+        getAdminArticlesByCourse(courseId),
       ])
       setCourse(courseRes.data.data ?? courseRes.data)
       setArticles(articlesRes.data.data ?? articlesRes.data)
@@ -74,12 +75,12 @@ export default function ManageArticles() {
         courseId: Number(courseId),
         order: form.order ? Number(form.order) : articles.length + 1,
       }
-      const res = await createArticle(payload)
-      setArticles((prev) => [...prev, res.data.data ?? res.data])
-      setForm({ title: '', content: '', order: '' })
+      await createArticle(payload)
+      setForm({ title: '', content: ARTICLE_STARTER, order: '' })
       setShowForm(false)
       setSuccessMsg('Article created successfully!')
       setTimeout(() => setSuccessMsg(''), 3000)
+      await fetchData()
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to create article.')
     } finally {

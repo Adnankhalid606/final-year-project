@@ -2,7 +2,8 @@ import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
-import { getCourses, createCourse } from '../../api/courses'
+import { createCourse } from '../../api/courses'
+import { getAdminCourses } from '../../api/admin'
 
 export default function ManageCourses() {
   const [courses, setCourses] = useState([])
@@ -16,7 +17,7 @@ export default function ManageCourses() {
 
   const fetchCourses = async () => {
     try {
-      const res = await getCourses()
+      const res = await getAdminCourses()
       setCourses(res.data.data ?? res.data)
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to load courses.')
@@ -39,12 +40,12 @@ export default function ManageCourses() {
     setSuccessMsg('')
     setSubmitting(true)
     try {
-      const res = await createCourse(form)
-      setCourses((prev) => [...prev, res.data.data ?? res.data])
+      await createCourse(form)
       setForm({ title: '', description: '' })
       setShowForm(false)
       setSuccessMsg('Course created successfully!')
       setTimeout(() => setSuccessMsg(''), 3000)
+      await fetchCourses()
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to create course.')
     } finally {

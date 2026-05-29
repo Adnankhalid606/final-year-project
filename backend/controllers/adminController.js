@@ -186,6 +186,51 @@ export const updateHackathonStatus = async (req, res) => {
 };
 
 /**
+ * Get all courses (admin view)
+ * Returns every active course regardless of which admin created it.
+ */
+export const getAllCourses = async (req, res) => {
+  try {
+    const [courses] = await db.query(`
+      SELECT
+        courses.*,
+        users.name AS created_by_name
+      FROM courses
+      LEFT JOIN users ON courses.created_by = users.id
+      WHERE courses.deleted_at IS NULL
+      ORDER BY courses.created_at DESC
+    `);
+    return res.status(200).json({ success: true, data: courses });
+  } catch (error) {
+    return sendServerError(res, error);
+  }
+};
+
+/**
+ * Get all articles for a course (admin view)
+ * Returns every active article for the given course regardless of which admin created it.
+ */
+export const getAllArticlesByCourse = async (req, res) => {
+  try {
+    const { courseId } = req.params;
+    const [articles] = await db.query(
+      `SELECT
+         articles.*,
+         users.name AS created_by_name
+       FROM articles
+       LEFT JOIN users ON articles.created_by = users.id
+       WHERE articles.course_id = ?
+       AND articles.deleted_at IS NULL
+       ORDER BY articles.\`order\` ASC`,
+      [courseId]
+    );
+    return res.status(200).json({ success: true, data: articles });
+  } catch (error) {
+    return sendServerError(res, error);
+  }
+};
+
+/**
  * Delete (soft delete) a user
  */
 export const deleteUser = async (req, res) => {
