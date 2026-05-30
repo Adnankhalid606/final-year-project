@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
+import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism'
 import { getArticle } from '../../api/articles'
 import { completeArticle } from '../../api/progress'
 
@@ -93,13 +95,46 @@ export default function ArticleReader() {
               <hr className="mb-4" />
 
               <div
-                className="article-content"
-                style={{ lineHeight: 1.8, fontSize: '1.05rem' }}
+                className="article-content markdown-body"
+                style={{
+                  lineHeight: 1.8,
+                  fontSize: '1.05rem',
+                }}
               >
                 {article?.content ? (
-                  <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                    {article.content}
-                  </ReactMarkdown>
+                  <>
+                    <ReactMarkdown
+                      remarkPlugins={[remarkGfm]}
+                      components={{
+                        code({ inline, className, children, ...props }) {
+                          const match = /language-(\w+)/.exec(className || '')
+
+                          return !inline && match ? (
+                            <SyntaxHighlighter
+                              style={vscDarkPlus}
+                              language={match[1]}
+                              PreTag="div"
+                              wrapLongLines={true}
+                              customStyle={{
+                                margin: 0,
+                                borderRadius: '10px',
+                              }}
+                              {...props}
+                            >
+                              {String(children).replace(/\n$/, '')}
+                            </SyntaxHighlighter>
+                          ) : (
+                            <code className={className} {...props}>
+                              {children}
+                            </code>
+                          )
+                        },
+                      }}
+                    >
+                      {article.content}
+                    </ReactMarkdown>
+
+                  </>
                 ) : (
                   <p className="text-muted">No content available.</p>
                 )}
@@ -116,7 +151,7 @@ export default function ArticleReader() {
                 {completed ? (
                   <button className="btn btn-success" disabled>
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="me-2" viewBox="0 0 16 16">
-                      <path d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0z"/>
+                      <path d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0z" />
                     </svg>
                     Completed
                   </button>

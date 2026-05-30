@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
+import SyntaxHighlighter from 'react-syntax-highlighter'
+import { atomOneDark } from 'react-syntax-highlighter/dist/esm/styles/hljs'
 import { getCourse } from '../../api/courses'
 import { createArticle, updateArticle, deleteArticle } from '../../api/articles'
 import { getAdminArticlesByCourse } from '../../api/admin'
@@ -32,26 +34,26 @@ const EMPTY_FORM = { title: '', content: ARTICLE_STARTER, order: '' }
 
 export default function ManageArticles() {
   const { courseId } = useParams()
-  const [course, setCourse]         = useState(null)
-  const [articles, setArticles]     = useState([])
-  const [loading, setLoading]       = useState(true)
-  const [error, setError]           = useState('')
+  const [course, setCourse] = useState(null)
+  const [articles, setArticles] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
   const [successMsg, setSuccessMsg] = useState('')
 
   // Create form
-  const [form, setForm]             = useState(EMPTY_FORM)
+  const [form, setForm] = useState(EMPTY_FORM)
   const [submitting, setSubmitting] = useState(false)
-  const [showForm, setShowForm]     = useState(false)
+  const [showForm, setShowForm] = useState(false)
   const [previewMode, setPreviewMode] = useState('split')
 
   // Edit state
-  const [editingId, setEditingId]   = useState(null)
-  const [editForm, setEditForm]     = useState({ title: '', content: '', order: '' })
+  const [editingId, setEditingId] = useState(null)
+  const [editForm, setEditForm] = useState({ title: '', content: '', order: '' })
   const [editPreview, setEditPreview] = useState('split')
-  const [saving, setSaving]         = useState(false)
+  const [saving, setSaving] = useState(false)
 
   // Delete state
-  const [deleting, setDeleting]     = useState(null)
+  const [deleting, setDeleting] = useState(null)
 
   const fetchData = async () => {
     try {
@@ -80,10 +82,10 @@ export default function ManageArticles() {
     setSubmitting(true)
     try {
       const payload = {
-        title:    form.title,
-        content:  form.content,
+        title: form.title,
+        content: form.content,
         courseId: Number(courseId),
-        order:    form.order ? Number(form.order) : articles.length + 1,
+        order: form.order ? Number(form.order) : articles.length + 1,
       }
       await createArticle(payload)
       setForm(EMPTY_FORM)
@@ -102,9 +104,9 @@ export default function ManageArticles() {
   const openEdit = (article) => {
     setEditingId(article.id)
     setEditForm({
-      title:   article.title   || '',
+      title: article.title || '',
       content: article.content || '',
-      order:   article.order   ?? '',
+      order: article.order ?? '',
     })
     setEditPreview('split')
     setError('')
@@ -123,9 +125,9 @@ export default function ManageArticles() {
     setError('')
     try {
       const payload = {
-        title:   editForm.title,
+        title: editForm.title,
         content: editForm.content,
-        order:   editForm.order !== '' ? Number(editForm.order) : null,
+        order: editForm.order !== '' ? Number(editForm.order) : null,
       }
       await updateArticle(id, payload)
       setArticles(prev =>
@@ -178,7 +180,7 @@ export default function ManageArticles() {
         </div>
       </div>
 
-      {error      && <div className="alert alert-danger">{error}</div>}
+      {error && <div className="alert alert-danger">{error}</div>}
       {successMsg && <div className="alert alert-success">{successMsg}</div>}
 
       {/* ── Create Article Form ──────────────────────────────────────────────── */}
@@ -402,9 +404,47 @@ function MarkdownEditor({ value, name, onChange, previewMode, setPreviewMode }) 
                   Preview
                 </div>
               )}
-              <div className="p-3" style={{ fontSize: '0.9rem', lineHeight: 1.7 }}>
+              <div
+                className="article-content markdown-body"
+                style={{ lineHeight: 1.8, fontSize: '1.05rem' }}
+              >
                 {value.trim() ? (
-                  <ReactMarkdown remarkPlugins={[remarkGfm]}>{value}</ReactMarkdown>
+                  <>
+                    <ReactMarkdown
+                      remarkPlugins={[remarkGfm]}
+                      components={{
+                        code({ inline, className, children, ...props }) {
+                          const match = /language-(\w+)/.exec(className || '')
+
+                          return !inline && match ? (
+                            <SyntaxHighlighter
+                              language={match[1]}
+                              style={atomOneDark}
+                              wrapLongLines={true}
+                              PreTag="div"
+                              {...props}
+                              customStyle={{
+                                margin: 0,
+                                borderRadius: '10px',
+                              }}
+                            >
+                              {String(children).replace(/\n$/, '')}
+                            </SyntaxHighlighter>
+                          ) : (
+                            <code className={className} {...props}>
+                              {children}
+                            </code>
+                          )
+                        },
+                      }}
+                    >
+                      {value}
+                    </ReactMarkdown>
+
+                    <pre style={{ fontSize: '12px', marginTop: '10px' }}>
+                      {JSON.stringify(value)}
+                    </pre>
+                  </>
                 ) : (
                   <span className="text-muted fst-italic">Nothing to preview yet.</span>
                 )}

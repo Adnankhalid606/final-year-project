@@ -333,7 +333,7 @@ pre {
   font-size: 0.875rem !important;
   line-height: 1.7 !important;
 }
-code {
+:not(pre) > code {
   background: #f1f5f9 !important;
   color: var(--primary) !important;
   padding: 0.15em 0.4em !important;
@@ -408,7 +408,7 @@ footer {
 .markdown-body p { margin-bottom: 1rem !important; color: #374151; }
 .markdown-body ul, .markdown-body ol { padding-left: 1.5rem !important; margin-bottom: 1rem !important; }
 .markdown-body li { margin-bottom: 0.35rem !important; }
-.markdown-body code {
+.markdown-body :not(pre) > code {
   background: #f1f5f9 !important;
   color: #6366f1 !important;
   padding: 0.15em 0.45em !important;

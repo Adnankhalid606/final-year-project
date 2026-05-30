@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
+import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism'
 import { getCheatsheets, createCheatsheet, updateCheatsheet, deleteCheatsheet } from '../../api/cheatsheets'
 
 const STARTER_MD = `# Cheatsheet Title
@@ -32,25 +34,25 @@ const slugify = (val) =>
   val.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
 
 export default function ManageCheatsheets() {
-  const [cheatsheets, setCheatsheets]   = useState([])
-  const [loading, setLoading]           = useState(true)
-  const [error, setError]               = useState('')
-  const [successMsg, setSuccessMsg]     = useState('')
+  const [cheatsheets, setCheatsheets] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
+  const [successMsg, setSuccessMsg] = useState('')
 
   // Create form
-  const [form, setForm]                 = useState(EMPTY_FORM)
-  const [submitting, setSubmitting]     = useState(false)
-  const [showForm, setShowForm]         = useState(false)
-  const [previewMode, setPreviewMode]   = useState('split')
+  const [form, setForm] = useState(EMPTY_FORM)
+  const [submitting, setSubmitting] = useState(false)
+  const [showForm, setShowForm] = useState(false)
+  const [previewMode, setPreviewMode] = useState('split')
 
   // Edit state
-  const [editingId, setEditingId]       = useState(null)
-  const [editForm, setEditForm]         = useState(EMPTY_FORM)
-  const [editPreview, setEditPreview]   = useState('split')
-  const [saving, setSaving]             = useState(false)
+  const [editingId, setEditingId] = useState(null)
+  const [editForm, setEditForm] = useState(EMPTY_FORM)
+  const [editPreview, setEditPreview] = useState('split')
+  const [saving, setSaving] = useState(false)
 
   // Delete state
-  const [deleting, setDeleting]         = useState(null)
+  const [deleting, setDeleting] = useState(null)
 
   const fetchCheatsheets = async () => {
     try {
@@ -98,10 +100,10 @@ export default function ManageCheatsheets() {
   const openEdit = (cs) => {
     setEditingId(cs.id)
     setEditForm({
-      title:    cs.title    || '',
-      slug:     cs.slug     || '',
+      title: cs.title || '',
+      slug: cs.slug || '',
       category: cs.category || '',
-      content:  cs.content  || '',
+      content: cs.content || '',
     })
     setEditPreview('split')
     setError('')
@@ -176,7 +178,7 @@ export default function ManageCheatsheets() {
         </div>
       </div>
 
-      {error      && <div className="alert alert-danger">{error}</div>}
+      {error && <div className="alert alert-danger">{error}</div>}
       {successMsg && <div className="alert alert-success">{successMsg}</div>}
 
       {/* ── Create Form ─────────────────────────────────────────────────────── */}
@@ -430,7 +432,29 @@ function MarkdownEditor({ value, name, onChange, previewMode, setPreviewMode }) 
             background: 'white',
           }}>
             <div className="markdown-body">
-              <ReactMarkdown remarkPlugins={[remarkGfm]}>
+              <ReactMarkdown
+                remarkPlugins={[remarkGfm]}
+                components={{
+                  code({ inline, className, children, ...props }) {
+                    const match = /language-(\w+)/.exec(className || '')
+
+                    return !inline && match ? (
+                      <SyntaxHighlighter
+                        style={vscDarkPlus}
+                        language={match[1]}
+                        PreTag="div"
+                        {...props}
+                      >
+                        {String(children).replace(/\n$/, '')}
+                      </SyntaxHighlighter>
+                    ) : (
+                      <code className={className} {...props}>
+                        {children}
+                      </code>
+                    )
+                  },
+                }}
+              >
                 {value || '*Nothing to preview yet...*'}
               </ReactMarkdown>
             </div>
