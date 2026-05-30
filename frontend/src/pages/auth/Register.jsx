@@ -4,6 +4,7 @@ import { register as registerApi } from '../../api/auth'
 
 export default function Register() {
   const [form, setForm] = useState({ name: '', email: '', password: '', role: 'user' })
+  const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
   const [loading, setLoading] = useState(false)
@@ -67,8 +68,28 @@ export default function Register() {
                     </div>
                     <div className="mb-3">
                       <label htmlFor="password" className="form-label">Password</label>
-                      <input type="password" className="form-control" id="password" name="password"
-                        value={form.password} onChange={handleChange} required placeholder="At least 6 characters" minLength={6} />
+                      <div className="input-group">
+                        <input
+                          type={showPassword ? 'text' : 'password'}
+                          className="form-control"
+                          id="password"
+                          name="password"
+                          value={form.password}
+                          onChange={handleChange}
+                          required
+                          placeholder="At least 6 characters"
+                          minLength={6}
+                        />
+                        <button
+                          type="button"
+                          className="btn btn-outline-secondary"
+                          onClick={() => setShowPassword(v => !v)}
+                          tabIndex={-1}
+                          aria-label={showPassword ? 'Hide password' : 'Show password'}
+                        >
+                          {showPassword ? '🙈' : '👁'}
+                        </button>
+                      </div>
                     </div>
                     <div className="mb-3">
                       <label className="form-label">Account Type</label>

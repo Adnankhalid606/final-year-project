@@ -255,11 +255,6 @@ export default function ManageArticles() {
                         <span className="badge bg-secondary rounded-pill">{article.order || '—'}</span>
                         <div>
                           <div className="fw-semibold">{article.title}</div>
-                          <small className="text-muted">
-                            {article.content
-                              ? article.content.substring(0, 80) + (article.content.length > 80 ? '...' : '')
-                              : 'No content'}
-                          </small>
                         </div>
                       </div>
                       <div className="d-flex gap-2">

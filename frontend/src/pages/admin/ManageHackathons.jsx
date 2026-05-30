@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
+import ReactMarkdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
 import { getAdminHackathons, updateHackathonStatus } from '../../api/admin'
 import { deleteHackathon, updateHackathon } from '../../api/hackathons'
 
@@ -22,6 +24,7 @@ const EMPTY_FORM = {
   start_date: '',
   end_date: '',
   status: 'upcoming',
+  prize_pool: '',
 }
 
 // Format a date string or Date to YYYY-MM-DD for <input type="date">
@@ -41,6 +44,7 @@ export default function ManageHackathons() {
   const [deleting, setDeleting]     = useState(null)  // id being deleted
   const [editingId, setEditingId]   = useState(null)  // id whose edit form is open
   const [editForm, setEditForm]     = useState(EMPTY_FORM)
+  const [editDescPreview, setEditDescPreview] = useState('write')
   const [saving, setSaving]         = useState(false)
 
   const fetchHackathons = async () => {
@@ -101,13 +105,16 @@ export default function ManageHackathons() {
       start_date:        toDateInput(h.start_date),
       end_date:          toDateInput(h.end_date),
       status:            h.status || 'upcoming',
+      prize_pool:        h.prize_pool ?? '',
     })
+    setEditDescPreview('write')
     setError('')
   }
 
   const cancelEdit = () => {
     setEditingId(null)
     setEditForm(EMPTY_FORM)
+    setEditDescPreview('write')
   }
 
   const handleEditChange = (e) => {
@@ -263,13 +270,12 @@ export default function ManageHackathons() {
                               />
                             </div>
                             <div className="col-12">
-                              <label className="form-label fw-semibold small">Description</label>
-                              <textarea
-                                className="form-control form-control-sm"
-                                name="description"
-                                rows={3}
+                              <MarkdownEditor
                                 value={editForm.description}
+                                name="description"
                                 onChange={handleEditChange}
+                                previewMode={editDescPreview}
+                                setPreviewMode={setEditDescPreview}
                               />
                             </div>
                             <div className="col-md-4">
@@ -316,6 +322,22 @@ export default function ManageHackathons() {
                                 ))}
                               </select>
                             </div>
+                            <div className="col-md-4">
+                              <label className="form-label fw-semibold small">Prize Pool (USD)</label>
+                              <div className="input-group input-group-sm">
+                                <span className="input-group-text">🏆</span>
+                                <input
+                                  type="number"
+                                  className="form-control form-control-sm"
+                                  name="prize_pool"
+                                  value={editForm.prize_pool}
+                                  onChange={handleEditChange}
+                                  placeholder="e.g. 10000"
+                                  min="0"
+                                />
+                                <span className="input-group-text">USD</span>
+                              </div>
+                            </div>
                             <div className="col-12 d-flex gap-2">
                               <button
                                 className="btn btn-primary btn-sm"
@@ -344,6 +366,82 @@ export default function ManageHackathons() {
             </tbody>
           </table>
         </div>
+      </div>
+    </div>
+  )
+}
+
+// ── Markdown editor for description ──────────────────────────────────────────
+function MarkdownEditor({ value, name, onChange, previewMode, setPreviewMode }) {
+  return (
+    <div className="mb-1">
+      <div className="d-flex justify-content-between align-items-center mb-2">
+        <label className="form-label fw-semibold small mb-0">
+          Description
+          <span className="badge bg-primary ms-2" style={{ fontSize: '0.65rem' }}>Markdown</span>
+        </label>
+        <div className="btn-group btn-group-sm">
+          {['write', 'split', 'preview'].map(mode => (
+            <button
+              key={mode}
+              type="button"
+              className={`btn ${previewMode === mode ? 'btn-primary' : 'btn-outline-secondary'}`}
+              onClick={() => setPreviewMode(mode)}
+              style={{ fontSize: '0.7rem' }}
+            >
+              {mode === 'split' ? '⬛ Split' : mode === 'write' ? '✏️ Write' : '👁 Preview'}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="d-flex gap-2" style={{ minHeight: 200 }}>
+        {(previewMode === 'write' || previewMode === 'split') && (
+          <div style={{ flex: 1 }}>
+            <textarea
+              className="form-control form-control-sm h-100"
+              name={name}
+              value={value}
+              onChange={onChange}
+              placeholder="Write hackathon description in Markdown..."
+              style={{
+                fontFamily: "'Fira Code', 'Courier New', monospace",
+                fontSize: '0.8rem',
+                lineHeight: 1.6,
+                minHeight: 200,
+                resize: 'vertical',
+                background: '#ffffff',
+                color: '#1e293b',
+                border: '1.5px solid #e2e8f0',
+                borderRadius: 6,
+              }}
+            />
+          </div>
+        )}
+
+        {(previewMode === 'preview' || previewMode === 'split') && (
+          <div style={{
+            flex: 1,
+            border: '1px solid #e2e8f0',
+            borderRadius: 6,
+            padding: '0.75rem 1rem',
+            overflowY: 'auto',
+            minHeight: 200,
+            background: 'white',
+            fontSize: '0.85rem',
+            lineHeight: 1.7,
+          }}>
+            {value?.trim() ? (
+              <ReactMarkdown remarkPlugins={[remarkGfm]}>{value}</ReactMarkdown>
+            ) : (
+              <span className="text-muted fst-italic">Nothing to preview yet...</span>
+            )}
+          </div>
+        )}
+      </div>
+
+      <div className="form-text mt-1" style={{ fontSize: '0.7rem' }}>
+        Supports: **bold**, *italic*, `code`, lists, headings, links, tables
       </div>
     </div>
   )

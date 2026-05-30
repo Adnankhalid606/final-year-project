@@ -180,9 +180,6 @@ export default function Landing() {
                             <span className="badge" style={{ background: `${colors[i % 3]}18`, color: colors[i % 3] }}>{levels[i % 3]}</span>
                           </div>
                           <h5 className="fw-bold mb-2">{course.title}</h5>
-                          <p className="text-muted small mb-4" style={{ lineHeight: 1.6 }}>
-                            {course.description?.substring(0, 80)}{course.description?.length > 80 ? '...' : ''}
-                          </p>
                           <div className="mb-3">
                             <div className="d-flex justify-content-between mb-1">
                               <span className="text-muted" style={{ fontSize: '0.8rem' }}>Course Progress</span>
@@ -236,9 +233,6 @@ export default function Landing() {
                           {h.organizer_name && <span className="text-muted" style={{ fontSize: '0.8rem' }}>by {h.organizer_name}</span>}
                         </div>
                         <h5 className="fw-bold mb-2">{h.title}</h5>
-                        <p className="text-muted small mb-3" style={{ lineHeight: 1.6 }}>
-                          {h.description?.substring(0, 80)}{h.description?.length > 80 ? '...' : ''}
-                        </p>
                         <div className="d-flex gap-3 mb-4" style={{ fontSize: '0.8rem', color: '#64748b' }}>
                           <span>📅 {formatDate(h.start_date)}</span>
                           <span>🏁 {formatDate(h.end_date)}</span>

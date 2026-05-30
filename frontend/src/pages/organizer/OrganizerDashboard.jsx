@@ -118,11 +118,6 @@ export default function OrganizerDashboard() {
                   <tr key={h.id}>
                     <td>
                       <div className="fw-semibold">{h.title}</div>
-                      {h.description && (
-                        <small className="text-muted">
-                          {h.description.substring(0, 60)}{h.description.length > 60 ? '...' : ''}
-                        </small>
-                      )}
                     </td>
                     <td><StatusBadge status={h.status} /></td>
                     <td>{formatDate(h.start_date)}</td>

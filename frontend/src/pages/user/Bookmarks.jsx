@@ -107,9 +107,6 @@ export default function Bookmarks() {
                 {h.organizer_name && (
                   <p className="text-muted small mb-2">by {h.organizer_name}</p>
                 )}
-                <p className="card-text text-muted small flex-grow-1">
-                  {h.description?.substring(0, 100)}{h.description?.length > 100 ? '...' : ''}
-                </p>
                 <div className="mt-2 mb-3 text-muted small">
                   <div><strong>Start:</strong> {formatDate(h.start_date)}</div>
                   <div><strong>End:</strong> {formatDate(h.end_date)}</div>

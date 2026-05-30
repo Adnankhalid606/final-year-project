@@ -89,14 +89,15 @@ export const createHackathon = async (req, res) => {
       banner,
       registration_link,
       start_date,
-      end_date
+      end_date,
+      prize_pool,
     } = req.body;
     const organizerId = req.user.id;
 
     const [result] = await db.query(
       `INSERT INTO hackathons
-       (title, description, banner, registration_link, start_date, end_date, organizer_id)
-       VALUES (?, ?, ?, ?, ?, ?, ?)`,
+       (title, description, banner, registration_link, start_date, end_date, organizer_id, prize_pool)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         title,
         description,
@@ -104,7 +105,8 @@ export const createHackathon = async (req, res) => {
         registration_link,
         start_date,
         end_date,
-        organizerId
+        organizerId,
+        prize_pool ?? null,
       ]
     );
 
@@ -181,7 +183,8 @@ export const updateHackathon = async (req, res) => {
       registration_link,
       start_date,
       end_date,
-      status
+      status,
+      prize_pool,
     } = req.body;
 
     const hackathon = await getActiveHackathonById(hackathonId);
@@ -212,7 +215,8 @@ export const updateHackathon = async (req, res) => {
          registration_link = ?,
          start_date = ?,
          end_date = ?,
-         status = ?
+         status = ?,
+         prize_pool = ?
        WHERE id = ?`,
       [
         title,
@@ -222,6 +226,7 @@ export const updateHackathon = async (req, res) => {
         start_date,
         end_date,
         newStatus,
+        prize_pool ?? hackathon.prize_pool ?? null,
         hackathonId,
       ]
     );

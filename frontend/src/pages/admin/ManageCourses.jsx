@@ -196,7 +196,6 @@ export default function ManageCourses() {
                 <tr>
                   <th>#</th>
                   <th>Title</th>
-                  <th>Description</th>
                   <th className="text-end">Actions</th>
                 </tr>
               </thead>
@@ -207,11 +206,6 @@ export default function ManageCourses() {
                     <tr key={course.id}>
                       <td className="text-muted">{idx + 1}</td>
                       <td className="fw-semibold">{course.title}</td>
-                      <td className="text-muted small">
-                        {course.description
-                          ? course.description.substring(0, 80) + (course.description.length > 80 ? '...' : '')
-                          : '—'}
-                      </td>
                       <td className="text-end">
                         <div className="d-flex gap-2 justify-content-end">
                           <Link
@@ -243,7 +237,7 @@ export default function ManageCourses() {
                     {/* Inline edit row */}
                     {editingId === course.id && (
                       <tr key={`edit-${course.id}`} className="table-light">
-                        <td colSpan={4} className="p-4">
+                        <td colSpan={3} className="p-4">
                           <div className="mb-3">
                             <label className="form-label fw-semibold small">
                               Title <span className="text-danger">*</span>

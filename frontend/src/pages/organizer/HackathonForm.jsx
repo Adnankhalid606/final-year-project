@@ -11,6 +11,7 @@ const emptyForm = {
   registration_link: '',
   start_date: '',
   end_date: '',
+  prize_pool: '',
 }
 
 export default function HackathonForm() {
@@ -38,6 +39,7 @@ export default function HackathonForm() {
           registration_link: h.registration_link || '',
           start_date: h.start_date ? h.start_date.substring(0, 10) : '',
           end_date: h.end_date ? h.end_date.substring(0, 10) : '',
+          prize_pool: h.prize_pool ?? '',
         })
       } catch (err) {
         setError(err.response?.data?.message || 'Failed to load hackathon.')
@@ -225,6 +227,28 @@ export default function HackathonForm() {
                     onChange={handleChange}
                     placeholder="https://example.com/register"
                   />
+                </div>
+
+                <div className="mb-3">
+                  <label htmlFor="prize_pool" className="form-label fw-semibold">
+                    Prize Pool <span className="text-muted fw-normal small">(optional)</span>
+                  </label>
+                  <div className="input-group">
+                    <span className="input-group-text">🏆</span>
+                    <input
+                      type="number"
+                      className="form-control"
+                      id="prize_pool"
+                      name="prize_pool"
+                      value={form.prize_pool}
+                      onChange={handleChange}
+                      placeholder="e.g. 10000"
+                      min="0"
+                      step="1"
+                    />
+                    <span className="input-group-text">USD</span>
+                  </div>
+                  <div className="form-text">Total prize pool in USD. Leave blank if not applicable.</div>
                 </div>
 
                 <div className="row g-3 mb-3">

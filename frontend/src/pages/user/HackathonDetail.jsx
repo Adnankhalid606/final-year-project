@@ -153,6 +153,24 @@ export default function HackathonDetail() {
 
               <hr className="mb-4" />
 
+              {/* Prize Pool */}
+              {hackathon?.prize_pool && (
+                <div
+                  className="d-flex justify-content-between align-items-center px-4 py-3 rounded-3 mb-4"
+                  style={{ background: '#fff8f0', border: '1.5px solid #fde8c8' }}
+                >
+                  <div className="d-flex align-items-center gap-2 text-muted fw-semibold text-uppercase small" style={{ letterSpacing: '0.05em' }}>
+                    <span style={{ fontSize: '1.2rem' }}>🏆</span> Prize Pool
+                  </div>
+                  <div>
+                    <span className="fw-bold" style={{ fontSize: '1.6rem', color: '#f97316' }}>
+                      {Number(hackathon.prize_pool).toLocaleString()}
+                    </span>
+                    <span className="text-muted ms-2 fw-semibold">USD</span>
+                  </div>
+                </div>
+              )}
+
               {/* Description — rendered as markdown */}
               <div style={{ lineHeight: 1.8, fontSize: '1.05rem' }}>
                 {hackathon?.description ? (

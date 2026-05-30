@@ -166,9 +166,6 @@ export default function Hackathons() {
                       {h.organizer_name}
                     </p>
                   )}
-                  <p className="card-text text-muted small flex-grow-1">
-                    {h.description?.substring(0, 120)}{h.description?.length > 120 ? '...' : ''}
-                  </p>
                   <div className="mt-2 mb-3">
                     <div className="d-flex gap-3 text-muted small">
                       <span>
@@ -178,6 +175,15 @@ export default function Hackathons() {
                         <strong>End:</strong> {formatDate(h.end_date)}
                       </span>
                     </div>
+                    {h.prize_pool && (
+                      <div className="mt-2 d-flex align-items-center gap-1">
+                        <span>🏆</span>
+                        <span className="fw-bold" style={{ color: '#f97316' }}>
+                          ${Number(h.prize_pool).toLocaleString()}
+                        </span>
+                        <span className="text-muted small">USD prize pool</span>
+                      </div>
+                    )}
                   </div>
                   <div className="d-flex gap-2 mt-auto">
                     <Link

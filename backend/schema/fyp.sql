@@ -242,12 +242,8 @@ ALTER TABLE `courses`
   ADD PRIMARY KEY (`id`),
   ADD KEY `created_by` (`created_by`);
 
---
--- Indexes for table `hackathons`
---
 ALTER TABLE `hackathons`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `organizer_id` (`organizer_id`);
+  ADD COLUMN `prize_pool` DECIMAL(12,2) DEFAULT NULL AFTER `registration_link`;
 
 --
 -- Indexes for table `progress`

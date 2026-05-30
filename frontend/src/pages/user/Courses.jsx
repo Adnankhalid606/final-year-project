@@ -73,9 +73,6 @@ export default function Courses() {
               <div className="card h-100 shadow-sm border-0">
                 <div className="card-body d-flex flex-column">
                   <h5 className="card-title fw-bold">{course.title}</h5>
-                  <p className="card-text text-muted flex-grow-1">
-                    {course.description || 'No description available.'}
-                  </p>
                   <div className="mt-3">
                     <div className="d-flex justify-content-between mb-1">
                       <small className="text-muted">Progress</small>
