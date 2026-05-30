@@ -440,10 +440,6 @@ function MarkdownEditor({ value, name, onChange, previewMode, setPreviewMode }) 
                     >
                       {value}
                     </ReactMarkdown>
-
-                    <pre style={{ fontSize: '12px', marginTop: '10px' }}>
-                      {JSON.stringify(value)}
-                    </pre>
                   </>
                 ) : (
                   <span className="text-muted fst-italic">Nothing to preview yet.</span>
